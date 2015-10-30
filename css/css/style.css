@@ -1,0 +1,31 @@
+@import url('kraken.css');
+
+
+div.flash {
+	color: #FFCC00;
+	padding: .5em 0;
+	margin: .8125em 0;
+}
+div.success {
+	color: #99CC00;
+}
+div.error {
+	color: #FF3300;
+}
+
+form .error {
+	color: #FF3300;
+}
+
+table.lamp-info {
+	border-collapse: collapse;
+	width: 100%;
+}
+table.lamp-info th {
+	text-align: left;
+	padding-right: .5em;
+}
+
+a {
+	cursor: pointer;
+}

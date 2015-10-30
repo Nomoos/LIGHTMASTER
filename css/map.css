@@ -1,0 +1,132 @@
+body{
+        background: #FFE4C2;
+      }
+      .buttons:hover{
+      background: rgb(255, 228, 194);
+    }
+    .buttons{
+    padding: 3px;
+    border: 2px;
+    background: #F3D2A7;
+    
+
+      }
+      #map {
+        height: 500px;
+        width: 88%;
+        position:absolute;
+      }
+      .item{
+        display: inline;
+      }
+      last{
+        margin-right: 5px;
+      }
+      .nav, .nav_select, .menu, .menu_container, .item{
+      background: #C99F6A;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      color: white;
+      }
+      .nav{
+        float:right;         
+      }
+      .nav_select{
+        display: inline;
+        width:auto;
+        margin-bottom: 0px;
+        border-bottom: 0px;
+        border-top: 0px;
+        border-color: white;
+      }
+      .menu{
+        float:left;
+        padding:3px;
+      }
+      .menu_container{
+      }
+      a.link {
+        padding-right: 5px;
+        padding-left: 5px;
+        padding-bottom: 7px;
+        padding-top: 6px;
+        text-decoration: none;
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        color: white;
+      }
+      a.link:hover {
+        background: #FFE4C2;
+        text-decoration: none;
+        color: black;
+      }
+      a.link:active {
+      background: #F3D2A7;
+      color: white;
+      }
+      .space50{
+      height : 50px;
+      }
+      .space31{
+      height : 31px;
+      }
+      .form_container{
+      color: white;
+      margin-top: 30px;
+      float: right;
+      padding:5px;
+      width: 15%;
+      position: relative;
+      background: #C99F6A;
+      width: auto;
+      }
+      .container{
+      height: 581px;
+      /*background:#DEB887; */
+      padding-left: 3px;
+      padding-right: 3px;
+      }
+      .newlamp{
+      
+      }
+      .nazev_atributu {
+      font-weight: bold;
+      color: bisque;
+      }
+      .pulka{
+      width:50%;
+      }
+      .grey{
+      background:lightgray;
+      }
+      .red{
+      background:lightcoral;
+      }
+      .green{
+      background:lightgreen;
+      }
+      .chart{
+/*width: 540px;
+height: 300px;*/
+}
+.left_chart{
+margin-left: 5px;
+
+float: left;
+}
+.right_chart{
+margin-right: 5px;
+
+float: right;
+}
+input {
+  margin-bottom: 5px;
+}
+select {
+  margin-bottom: 5px;
+  background: bisque;
+}
+.leaflet-control-attribution.leaflet-control {
+  display: none;
+}
+.content_container{
+ background:rgb(218, 160, 85) ;
+}
