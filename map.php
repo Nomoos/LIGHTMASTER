@@ -94,7 +94,7 @@ If($_POST['lamp_status']=='-1'){
 $_POST['lamp_status']=0;
 }
 echo "console.log('Přepinam do stavu".$_POST['lamp_status']."');";
-mysql_query("UPDATE lamp SET is_enabled =".$_POST['lamp_status']." WHERE id = ".$_POST['lamp_id'].";");
+mysqli_query($dataconection, "UPDATE lamp SET is_enabled =".$_POST['lamp_status']." WHERE id = ".$_POST['lamp_id'].";");
 }else{
 echo "console.log('Status lampy nedostupny');";
 }
@@ -109,10 +109,10 @@ If($_POST['status']=="create"){
   }
 //if new controler  
   If($_POST['control']=="new"){
-   mysql_query("INSERT INTO Control_gateway (ID_company, Name_control) VALUES ('".$_POST['select_company']."', '".$_POST['control_name']."');");
-   $result=mysql_query("SELECT ID_control FROM Control_gateway ORDER BY ID_control DESC 
+   mysqli_query($dataconection, "INSERT INTO Control_gateway (ID_company, Name_control) VALUES ('".$_POST['select_company']."', '".$_POST['control_name']."');");
+   $result=mysqli_query($dataconection, "SELECT ID_control FROM Control_gateway ORDER BY ID_control DESC 
 LIMIT 0 , 1 ");
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 $_POST['control']=$row[0];
 echo 'console.log("'.$row[0].'");';
   }      
@@ -121,16 +121,16 @@ If($_POST['lamp_id']=="new"){
 
 echo 'console.log("tady");';
 If($_POST['plan']=='-1'){
-mysql_query("INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`, `set_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_POST['workload'].");");
+mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`, `set_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_POST['workload'].");");
 }else{
-mysql_query("INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].");");
+mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].");");
 }
-$result=mysql_query("SELECT id FROM  `lamp` ORDER BY id DESC LIMIT 0 , 1;");
-$row = mysql_fetch_array($result);
+$result=mysqli_query($dataconection, "SELECT id FROM  `lamp` ORDER BY id DESC LIMIT 0 , 1;");
+$row = mysqli_fetch_array($result);
 $_POST['lamp_id']=$row[0];
 }else{
 If($_POST['plan']=='-1'){
-mysql_query("UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
+mysqli_query($dataconection, "UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
 `long` =  ".$_POST['lat'].",
 `lat` =  ".$_POST['lng'].",
 `ID_control` =  ".$_POST['control'].",
@@ -138,7 +138,7 @@ mysql_query("UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['l
 `ID_workload` =  ".$_POST['plan']."
  WHERE id = ".$_POST['lamp_id'].";");
  }else{
-  mysql_query("UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
+  mysqli_query($dataconection, "UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
 `long` =  ".$_POST['lat'].",
 `lat` =  ".$_POST['lng'].",
 `ID_control` =  ".$_POST['control'].",
@@ -155,7 +155,7 @@ echo "console.log('Status :".$_POST['status']."');";
 //delete lamp
 If($_POST['status']=="delete"){
 echo 'console.log("UPDATE lamp SET x_deleted =\'0\' WHERE id = \"'.$_POST['lamp_id'].'\";");';
-mysql_query("UPDATE lamp SET x_deleted ='1' WHERE id = ".$_POST['lamp_id'].";");
+mysqli_query($dataconection, "UPDATE lamp SET x_deleted ='1' WHERE id = ".$_POST['lamp_id'].";");
 
 }else{
 echo "console.log('Status :".$_POST['status']."');";
@@ -310,37 +310,37 @@ echo 'lamps["'.$ID_Company.'"]=[];';
 echo 'company_list["'.$ID_Company.'"]=[];';
 echo 'plan_list["'.$ID_Company.'"]=[];';
 
-$result = mysql_query("SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,Workload_plan.ID_PLAN,Workload_plan.PLAN_NAME,lamp.set_workload FROM `Company`
+$result = mysqli_query($dataconection, "SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,Workload_plan.ID_PLAN,Workload_plan.PLAN_NAME,lamp.set_workload FROM `Company`
 LEFT OUTER JOIN Control_gateway AS Gate ON Gate.ID_company = Company.ID_company
 LEFT OUTER JOIN lamp ON lamp.ID_control = Gate.ID_control
 LEFT OUTER JOIN Workload_plan ON Workload_plan.ID_PLAN = lamp.ID_workload
 WHERE Company.ID_company=".$ID_Company." AND lamp.x_deleted = '0';");
 if (!$result) {
     echo 'console.log("'.$ID_Company.'");';
-    die('Invalid query: ' . mysql_error());
+    die('Invalid query: ' . mysqli_error());
 }  
 
-$controls=mysql_query("SELECT ID_control,Name_control FROM Control_gateway WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
+$controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM Control_gateway WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
 if (!$controls) {
-    die('Invalid query: ' . mysql_error());
+    die('Invalid query: ' . mysqli_error());
 }
 //company_list je seznam spolecnosti a obsahuje na indexu id_spolecnosti vsechny jejich kontrolery
-while ($company = mysql_fetch_array($controls, MYSQL_NUM)) {
+while ($company = mysqli_fetch_array($controls, MYSQL_NUM)) {
 echo 'company_list["'.$ID_Company.'"]['.$company[0].']= "'.$company[1].'";';
 };
 
 
-$plans=mysql_query("SELECT ID_PLAN,PLAN_NAME FROM Workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
+$plans=mysqli_query($dataconection, "SELECT ID_PLAN,PLAN_NAME FROM Workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
 if (!$plans) {
-    die('Invalid query: ' . mysql_error());
+    die('Invalid query: ' . mysqli_error());
 } 
 //plan_list je seznam planu spolecnosti
-while ($plan = mysql_fetch_array($plans, MYSQL_NUM)) {
+while ($plan = mysqli_fetch_array($plans, MYSQL_NUM)) {
 echo 'plan_list["'.$ID_Company.'"]['.$plan[0].']= "'.$plan[1].'";';
 };
 echo 'plan_list["'.$ID_Company.'"][-1]= "Manual";';
 
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+while ($row = mysqli_fetch_array($result, MYSQL_NUM)) {
 if(!empty($row[0])){
 if($row[4]==1){
 echo 'lamps["'.$ID_Company.'"]['.$row[2].'] = L.marker(['.$row[0].', '.$row[1].'],{icon: lampIcon});';
@@ -349,8 +349,8 @@ echo 'lamps["'.$ID_Company.'"]['.$row[2].'] = L.marker(['.$row[0].', '.$row[1].'
 }
 echo'lamps["'.$ID_Company.'"]['.$row[2].'].gate = "'.$row[3].'";';
 
-$actual_workload=mysql_query("SELECT logs.workload FROM `logs` WHERE logs.ID_lamp ='".$row[2]."' ORDER by logs.time DESC;");
-$actual_workload=mysql_fetch_array($actual_workload);
+$actual_workload=mysqli_query($dataconection, "SELECT logs.workload FROM `logs` WHERE logs.ID_lamp ='".$row[2]."' ORDER by logs.time DESC;");
+$actual_workload=mysqli_fetch_array($actual_workload);
 if(!empty($actual_workload[0])){
 echo'lamps["'.$ID_Company.'"]['.$row[2].'].actual_workload = "'.$actual_workload[0].'";';
 }else{

@@ -1,6 +1,6 @@
 <?php
 
-$result = mysql_query("SELECT * 
+$result = mysqli_query($dataconection, "SELECT * 
 FROM  `users` 
 LEFT OUTER JOIN Rule_access AS Rule ON users.id = Rule.ID_user
 WHERE users.id=".$_SESSION['id'].";");
@@ -8,14 +8,14 @@ WHERE users.id=".$_SESSION['id'].";");
 
 
 
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 extract($row);
 if($Super_admin==1)
 {
-$result = mysql_query("SELECT ID_company, Company_name
+$result = mysqli_query($dataconection, "SELECT ID_company, Company_name
 FROM  `Company` ");
 }else{
-$result = mysql_query("SELECT Company.ID_company AS ID_company,Company.Company_name AS Company_name FROM `users`
+$result = mysqli_query($dataconection, "SELECT Company.ID_company AS ID_company,Company.Company_name AS Company_name FROM `users`
 LEFT OUTER JOIN License_managment AS Managment ON users.id = Managment.ID_user
 LEFT OUTER JOIN Company ON Company.ID_company = Managment.ID_company
 WHERE users.id=".$_SESSION['id']."; 
@@ -33,7 +33,7 @@ Společnost:
 <?php
 $_SESSION['company']=array();
 if(!empty($result)){
-While( $row = mysql_fetch_array($result) )
+While( $row = mysqli_fetch_array($result) )
 {
 extract($row);
 

@@ -146,11 +146,11 @@ $heslo = $heslo."g5ds8";
 	require_once 'db.php';
 
 //Ověřujeme, zda jíž není uživatel se stejným loginem	
-	$q1 = mysql_query("SELECT * FROM `users` WHERE `login`='".$login."'");
-	if(!$q1) { echo mysql_error() . ' - ' . mysql_errno(); }
+	$q1 = mysqli_query($dataconection, "SELECT * FROM `users` WHERE `login`='".$login."'");
+	if(!$q1) { echo mysqli_error($dataconection) . ' - ' . mysqli_errno($dataconection); }
 	else {
 //Jestli existuje tak vyvedeme hlášení
-		if(mysql_num_rows($q1)==1){
+		if(mysqli_num_rows($q1)==1){
 			exit("Uživatelské jméno je obsazené, vyberte si jiné");
 		} else {
 			
@@ -160,15 +160,15 @@ $heslo = $heslo."g5ds8";
 			
 //V případě, že není tak vložíme data o novém uživateli do databáze
 // !!! NEZAPOMEŇTE VLOŽIT DO DATABÁZE EMAIL A DATUM !!!
-			$q2 = mysql_query("INSERT INTO `users`(`name`,`login`,`pass`,`avatar`,`email`,`date`) VALUES('".$name."','".$login."','".$heslo."','".$avatar."','".$email."', NOW())");
-			if(!$q2) { echo mysqll_error() . ' - ' . mysql_errno(); }
+			$q2 = mysqli_query($dataconection, "INSERT INTO `users`(`name`,`login`,`pass`,`avatar`,`email`,`date`) VALUES('".$name."','".$login."','".$heslo."','".$avatar."','".$email."', NOW())");
+			if(!$q2) { echo mysqli_error($dataconection) . ' - ' . mysqli_errno($dataconection); }
 			else {
 				
 // vybereme identifikátor nového uživatele a pomocí něj vytvoříme kód aktivace účtu
-				$q3 = mysql_query("SELECT `id` FROM `users` WHERE `login`='".$login."'");
-				$r3 = mysql_fetch_assoc($q3);
+				$q3 = mysqli_query($dataconection, "SELECT `id` FROM `users` WHERE `login`='".$login."'");
+				$r3 = mysqli_fetch_assoc($q3);
         
-				mysql_query("INSERT INTO `Rule_access` (`Rule_access_ID`, `Super_admin`, `View_lamp`, `Edit_lamp`, `Edit_rule`, `Edit_company`, `ID_user`, `ID_company`, `Set_role`, `x_Modify`) VALUES (NULL, '0', '1', '0', '0', '0', '".$r3['id']."', '', '0', NOW());");
+				mysqli_query($dataconection, "INSERT INTO `Rule_access` (`Rule_access_ID`, `Super_admin`, `View_lamp`, `Edit_lamp`, `Edit_rule`, `Edit_company`, `ID_user`, `ID_company`, `Set_role`, `x_Modify`) VALUES (NULL, '0', '1', '0', '0', '0', '".$r3['id']."', '', '0', NOW());");
         
 // do proměnné $activation zašifrujeme identifikátor a přihlášovací jméno
 				$activation = md5($r3['id']).md5($login);
