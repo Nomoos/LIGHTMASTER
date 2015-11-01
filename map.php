@@ -637,7 +637,7 @@ map.on('draw:edited', function (e) {
 var layers = e.layers;
 layers.eachLayer(function (layer) {
         //do whatever you want, most likely save back to db
-        var layer = e.layer;
+        var layer = e.layers;
         var shape = layer.toGeoJSON()
         var shape_for_db = JSON.stringify(shape);
         console.log(shape_for_db)
