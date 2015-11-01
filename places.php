@@ -84,7 +84,6 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<link rel="stylesheet" href="http://openlayers.org/en/v3.2.1/css/ol.css" type="text/css">
     <style>
       .map {
         height: 400px;
@@ -93,7 +92,6 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     </style>
   <title>'.$result['login'].'</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" >
-  <script src="http://openlayers.org/en/v3.2.1/build/ol.js" type="text/javascript"></script>
 </head>
 <body>
 ';

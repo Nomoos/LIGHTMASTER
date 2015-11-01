@@ -1,5 +1,6 @@
 <?php
-session_start();
+session_start(); 
+include "variables.php";
 //Celý postup funguje na sessions. Právě v session se ukládají data uživatele, zatímco se nacházi na stránkach. Je důležite spustit sessions na začátku stránky!  
 
 if (isset($_GET['action'])){
@@ -50,8 +51,8 @@ if(!empty($_SESSION['login']) and !empty($_SESSION['heslo']))
     $r_ava = mysql_fetch_array($q_ava);
 }
 
-?>
 
+echo'
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -60,7 +61,8 @@ if(!empty($_SESSION['login']) and !empty($_SESSION['heslo']))
 	<title>Přihlašení uživatele</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" >
 
-<link rel="stylesheet" href="/www2/css/css/kraken.css" >	
+<link rel="stylesheet" href="'.$_SERVER['SERVER_ROOT'].'/css/css/kraken.css" >';
+?>
 <style>
 .container{
 width: 20%;
