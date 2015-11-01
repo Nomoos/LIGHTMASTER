@@ -1,10 +1,10 @@
 <?php
 
-$DBSERVER = 'localhost';
-$DBUSER = 'root';
-$DBPASS = 'vertrigo';
+$DBSERVER = 'vpn2.atema.cz';
+$DBUSER = 'lamps.light';
+$DBPASS = 'i0tgJvPMOV';
 
-$DB = 'lamps.lightmaster';
+$DB = 'lamps.lightmaster2';
 
 
 $dataconection = new mysqli($DBSERVER,$DBUSER,$DBPASS, $DB);

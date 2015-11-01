@@ -10,13 +10,21 @@ require_once 'pristup.php';
 	<title>Map</title>
 <!-- js knihovny -->
 <script src="lib/leaflet/leaflet.js"></script>
+
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
 <script src="lib/js/jquery.js"></script>
 <script src="module/myscript.js"></script>
 <!-- styly -->
 <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
 <link rel="stylesheet" href="css/css/kraken.css" />
 <link rel="stylesheet" href="css/map.css" />
 <link rel="shortcut icon" href="img/sviti.png" />	
+
+<!-- testy -->
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.4/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.4/leaflet.fullscreen.css' rel='stylesheet' />
+
 <style>
  .maps{
  
@@ -73,7 +81,7 @@ echo 'document.getElementById("company").value='.$_POST['select_company'].';';
 }else{
 echo 'console.log("Je POST není vybraná společnost.");';
 }
-//spolecnost
+//zoom
 If(!empty($_POST['zoom'])){
 echo 'var map = L.map(\'map\').setView(['.$_POST['lat_default'].', '.$_POST['lng_default'].'], '.$_POST['zoom'].');';
 
@@ -87,7 +95,7 @@ If(!empty($_POST['lamp_id'])){
 //v postu je status
 If(!empty($_POST['status'])){
 
-//status lamp
+//status lamp switch
 If($_POST['status']=="switch_status"){
 If(!empty($_POST['lamp_status'])){
 If($_POST['lamp_status']=='-1'){
@@ -102,15 +110,15 @@ echo "console.log('Status lampy nedostupny');";
 echo "console.log('Status :".$_POST['status']."');";
 }
 
-//create lamp
+//status create lamp
 If($_POST['status']=="create"){
   If($_POST['lamp_status']=='-1'){
   $_POST['lamp_status']=0;
   }
 //if new controler  
   If($_POST['control']=="new"){
-   mysqli_query($dataconection, "INSERT INTO Control_gateway (ID_company, Name_control) VALUES ('".$_POST['select_company']."', '".$_POST['control_name']."');");
-   $result=mysqli_query($dataconection, "SELECT ID_control FROM Control_gateway ORDER BY ID_control DESC 
+   mysqli_query($dataconection, "INSERT INTO control_gateway (ID_company, Name_control) VALUES ('".$_POST['select_company']."', '".$_POST['control_name']."');");
+   $result=mysqli_query($dataconection, "SELECT ID_control FROM control_gateway ORDER BY ID_control DESC 
 LIMIT 0 , 1 ");
 $row = mysqli_fetch_array($result);
 $_POST['control']=$row[0];
@@ -217,6 +225,7 @@ unselect_all();
 new_lamp=1;
 document.getElementById("newlamp").innerHTML = '<span style="font-weight: bold">Pro vytvoření nové lampy klikněte do mapy.</span><br><button class="buttons pulk" type="Cancel_btt" onclick="new_lamp=0;create_lamp_button();">Zrušit</button>';
 }
+
 function create_lamp_button(){
  document.getElementById("newlamp").innerHTML = '<button id="new_lamp_btt" class="buttons" type="newlamp_btt" onclick="create_lamp();" style="width:100%;">Nová lampa</button>';
 }
@@ -310,19 +319,19 @@ echo 'lamps["'.$ID_Company.'"]=[];';
 echo 'company_list["'.$ID_Company.'"]=[];';
 echo 'plan_list["'.$ID_Company.'"]=[];';
 
-$result = mysqli_query($dataconection, "SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,Workload_plan.ID_PLAN,Workload_plan.PLAN_NAME,lamp.set_workload FROM `Company`
-LEFT OUTER JOIN Control_gateway AS Gate ON Gate.ID_company = Company.ID_company
+$result = mysqli_query($dataconection, "SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,workload_plan.ID_PLAN,workload_plan.PLAN_NAME,lamp.set_workload FROM `company`
+LEFT OUTER JOIN control_gateway AS Gate ON Gate.ID_company = company.ID_company
 LEFT OUTER JOIN lamp ON lamp.ID_control = Gate.ID_control
-LEFT OUTER JOIN Workload_plan ON Workload_plan.ID_PLAN = lamp.ID_workload
-WHERE Company.ID_company=".$ID_Company." AND lamp.x_deleted = '0';");
-if (!$result) {
+LEFT OUTER JOIN workload_plan ON workload_plan.ID_PLAN = lamp.ID_workload
+WHERE company.ID_company= ".$ID_Company." AND lamp.x_deleted = '0';");
+if (!$result) { 
     echo 'console.log("'.$ID_Company.'");';
-    die('Invalid query: ' . mysqli_error());
-}  
+    die('console.log("Invalid query: ' . mysqli_error($dataconection).'");');
+} 
 
-$controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM Control_gateway WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
+$controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM control_gateway WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
 if (!$controls) {
-    die('Invalid query: ' . mysqli_error());
+    die('</script><div class="error">Invalid query: ' . mysqli_error($dataconection).'</div><script>');
 }
 //company_list je seznam spolecnosti a obsahuje na indexu id_spolecnosti vsechny jejich kontrolery
 while ($company = mysqli_fetch_array($controls, MYSQL_NUM)) {
@@ -330,9 +339,9 @@ echo 'company_list["'.$ID_Company.'"]['.$company[0].']= "'.$company[1].'";';
 };
 
 
-$plans=mysqli_query($dataconection, "SELECT ID_PLAN,PLAN_NAME FROM Workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
+$plans=mysqli_query($dataconection, "SELECT ID_PLAN,PLAN_NAME FROM workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
 if (!$plans) {
-    die('Invalid query: ' . mysqli_error());
+    die('</script><div class="error">Invalid query: ' . mysqli_error($dataconection).'</div><script>');
 } 
 //plan_list je seznam planu spolecnosti
 while ($plan = mysqli_fetch_array($plans, MYSQL_NUM)) {
@@ -413,6 +422,7 @@ function edit_lamp(id) {
       }
     select=select+'<option value="new">Nový kontroler</option></select><div id="new_input"></div>';
     
+    
     if(lamps[select_company][id].enabled=="1"){
     enabled='<input id="check" style="check" type="checkbox" name="status" value="1" onclick="change_status('+id+');" checked>';
     }else{
@@ -442,6 +452,11 @@ function edit_lamp(id) {
     
     
     document.getElementById("lampid").innerHTML = '<div class="description_lamp"><div >ID Lampy:</div> '+id+'<div class="nazev_atributu">Kontroluje:</div>'+select+'<div class="nazev_atributu">Zapnutá:</div>'+enabled+workload+'<div id="cords"></div></div>';
+    // pokud společnost nemá kontroler tak vytvarime spolu z lampou nový
+    if (company_list[select_company].length == 0){
+    new_controler("new");
+    }
+    //staré lampy
     if(id!='new'){
     document.getElementById(lamps[select_company][id].gate).selected =true;    
      }
@@ -455,6 +470,7 @@ function edit_lamp(id) {
     }else{
     document.getElementById("buttons").innerHTML = '<button class="buttons pulka" type="Save_btt" onclick="save_lamp('+id+')">Uložit</button><button class="buttons pulka" type="Cancel_btt" onclick="cancel_edit('+id+')">Zrušit</button>';
     }
+    
 };
 
 function change_status(id){
@@ -596,7 +612,48 @@ edit_lamp('new');
 if(select_company==""){
 
 document.getElementById("content_container").innerHTML='NEJSTE ČLENEM ŽÁDNÉ SPOLECNOSTI POZÁDEJTE ADMINA VASÍ SPOLECNOSTI O PŘIDÁNI NEBO SI ZAKUPTE LICENCI PRO NOVOU SPOLEČNOST';
-}   
+}
+
+//testy editovani polygonu
+var featureGroup = L.featureGroup().addTo(map);
+drawControl = new L.Control.Draw({
+    draw : {
+        polygon : {
+          //barva plochy
+          shapeOptions: {color: '#FF55FF'}
+        },
+        polyline : false,
+        rectangle : false,
+        circle : false,
+        marker : false
+    },
+    edit : {
+      featureGroup: featureGroup
+    },
+     position : 'topleft'
+});
+map.addControl(drawControl);
+map.on('draw:edited', function (e) {
+var layers = e.layers;
+layers.eachLayer(function (layer) {
+        //do whatever you want, most likely save back to db
+        var layer = e.layer;
+        var shape = layer.toGeoJSON()
+        var shape_for_db = JSON.stringify(shape);
+        console.log(shape_for_db)
+    });
+}); 
+map.on('draw:created', function(e) {
+      featureGroup.addLayer(e.layer);
+      
+      var layer = e.layer;
+      var shape = layer.toGeoJSON()
+      var shape_for_db = JSON.stringify(shape);
+      console.log(shape_for_db)
+  });
+// konec tesu editu polygonu
+
+   
 </script>
 </div>
   </body>

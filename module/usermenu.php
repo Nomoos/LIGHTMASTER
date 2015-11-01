@@ -2,13 +2,13 @@
 
 $result = mysqli_query($dataconection, "SELECT * 
 FROM  `users` 
-LEFT OUTER JOIN Rule_access AS Rule ON users.id = Rule.ID_user
+LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.ID_user
 WHERE users.id=".$_SESSION['id'].";");
 
 
 
-
 $row = mysqli_fetch_array($result);
+//echo $row;
 extract($row);
 if($Super_admin==1)
 {
@@ -42,8 +42,8 @@ extract($row);
 
 }
 }else{
- $_SESSION['company']['Demo']="Demo";            
-      echo '<option value="Demo">Demo</option>';
+ $_SESSION['company'][1]="Demo";            
+      echo '<option value="1">Demo</option>';
 }
  
 ?>

@@ -1,8 +1,7 @@
 <?php
 
-$_SERVER['SERVER_ROOT']='/www2/';
-
 session_start();
+include "variables.php";
 //Celý postup funguje na sessions. Právě v session se ukládají data uživatele, zatímco se nacházi na stránkach. Je důležite spustit sessions na začátku stránky!  
 header('Content-type: text/html;charset=UTF-8'); 
 if(isset($_POST['go'])){
