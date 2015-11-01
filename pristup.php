@@ -15,31 +15,33 @@ require_once 'db.php';
 			$login = $_SESSION['login'];
 			$heslo = $_SESSION['heslo'];
 			
-			$over = mysql_query("SELECT `id` FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."'");
+			$over = mysqli_query($dataconection,"SELECT `id` FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."'");
 			
 // Pokud najdeme identifikator s tímto loginem a heslem uložime ho do pole $res_over
-			if(mysql_num_rows($over)!=0)
+			if(mysqli_num_rows($over)!=0)
 			{
-				$res_over = mysql_fetch_assoc($over);
+				$res_over = mysqli_fetch_assoc($over);
 				
 // Ověřime, zda se jedna o registrovaného uživatele
 				
-				$query = mysql_query("SELECT * FROM `users` WHERE `id`='".$_SESSION['id']."'");
-				if(mysql_num_rows($query)!=0)
+				$query = mysqli_query($dataconection,"SELECT * FROM `users` WHERE `id`='".$_SESSION['id']."'");
+				if(mysqli_num_rows($query)!=0)
 				{
 // Pokus je uživatel přihlášený uložime data o něm do pole $result
 
-					$result = mysql_fetch_assoc($query);					
+					$result = mysqli_fetch_assoc($query);					
 				} else {
 					exit("Uživatel neexistuje.");
 				}
 				
 			} else {
 // Jinak zobrazime chybu
-				echo '<script>window.location.href="/www2";</script>;';
+          echo "Ahoj chyba 1";
+				//echo '<script>window.location.href="/";</script>;';
 			}
 		} else {
-				echo '<script>window.location.href="/www2";</script>;';	
+        echo "Ahoj chyba 2";
+				//echo '<script>window.location.href="/";</script>;';	
 		}
     ?>
 

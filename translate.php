@@ -1,12 +1,6 @@
 <?php
 //pripojeni k mySQL
-$link = mysql_connect('localhost', 'lamps.light', 'i0tgJvPMOV');
-if (!$link) {
-    die('Could not connect: ' . mysql_error());
-}
-echo 'Connected successfully';
-$DB = 'lamps.lightmaster';
-mysql_select_db($DB,$link) or die ('I cannot select DB');
+include "db.php";
 ?>
 
 	</head>
@@ -24,13 +18,12 @@ LEFT OUTER JOIN (SELECT * FROM php_translate WHERE trans_lang='sp') as sp ON en.
 WHERE en.trans_lang='en'
 ";
 
-$result = mysql_query($query);
+$result = mysqli_query($dataconection, $query);
 //}
-mysql_close($link);
 // Check result
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
-    $message  = 'Invalid query: ' . mysql_error() . "\n";
+    $message  = 'Invalid query: ' . mysqli_error($dataconection) . "\n";
     $message .= 'Whole query: ' . $query;
     die($message);
 }
@@ -45,7 +38,7 @@ echo "<div >";
 echo "<div class='trans_table'>";
 echo "<table><tr><td>KeyWord</td><td>Cesky</td><td>Anglicky</td><td>Francouyky</td><td>Spanelsky</td></tr>";
 
-while($pole = mysql_fetch_array($result))
+while($pole = mysqli_fetch_array($result))
 {
 echo "<tr>";
 //$a je pocet jazyku + 1 kvuli dotazu na klicove slovo

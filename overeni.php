@@ -53,11 +53,11 @@ if(isset($_POST['go'])){
     if(empty($ip) || $ip=='unknown') { $ip=getenv("REMOTE_ADDR"); } 
 
 // Odstraňujeme ip uživatelů, kteři chybovali při přihlášení, po 15 minutách                       
-	mysql_query("DELETE FROM `chyba` WHERE UNIX_TIMESTAMP() - UNIX_TIMESTAMP(`date`) > 900");
+	mysqli_query($dataconection, "DELETE FROM `chyba` WHERE UNIX_TIMESTAMP() - UNIX_TIMESTAMP(`date`) > 900");
 	
 // Vypišeme z databáze množstvi chybných pokusů přihlášení u uživatele s určitým ip 
-	$error = mysql_query("SELECT `errors` FROM `chyba` WHERE `ip`='".$ip."'");
-    $r_error = mysql_fetch_assoc($error);
+	$error = mysqli_query($dataconection,"SELECT `errors` FROM `chyba` WHERE `ip`='".$ip."'");
+    $r_error = mysqli_fetch_assoc($error);
 
 	if($r_error['errors'] > 2) 
 	{
@@ -79,37 +79,37 @@ if(isset($_POST['go'])){
 
 
 // Vypišeme z databáze veškera data o uživateli s zadaným loginem a heslem
-	$q1 = mysql_query("SELECT * FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."' AND `activation`=1");
+	$q1 = mysqli_query($dataconection, "SELECT * FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."' AND `activation`=1");
 	
 	
 /***************KONEC NOVÉHO*********************/
 	
-	if(!$q1) { echo mysql_error() . ' - ' . mysql_errno(); }
+	if(!$q1) { echo mysqli_error() . ' - ' . mysqli_errno(); }
 	else
 	{
-		$r1 = mysql_fetch_assoc($q1);
+		$r1 = mysqli_fetch_assoc($q1);
 /*
-		if(mysql_num_rows($q1) == 0){
+		if(mysqli_num_rows($q1) == 0){
 */
 		if(empty($r1['id']))
 		{
 // V případě, že uživatel neexistuje, přidame záznam do tabulky chyba, že uživatel s touto ip adresou se nepřihlásil  
-			$sel_ip = mysql_query("SELECT `ip` FROM `chyba` WHERE `ip`='".$ip."'");
-			$r_ip = mysql_fetch_row($sel_ip);
+			$sel_ip = mysqli_query($dataconection, "SELECT `ip` FROM `chyba` WHERE `ip`='".$ip."'");
+			$r_ip = mysqli_fetch_row($sel_ip);
 			
 // Ověřujeme, zda uživatel jíž není v tabulce
 			if($ip == $r_ip[0])
 			{
-				$sel_errors = mysql_query("SELECT `errors` FROM `chyba` WHERE `ip`='".$ip."'");
-				$r_errors = mysql_fetch_assoc($sel_errors);
+				$sel_errors = mysqli_query($dataconection, "SELECT `errors` FROM `chyba` WHERE `ip`='".$ip."'");
+				$r_errors = mysqli_fetch_assoc($sel_errors);
 // Přidame ještě jeden nepovedený pokus
 				$count = $r_errors['errors'] + 1;
 				
 // Dále aktualizujeme tabulku chyba
-				mysql_query("UPDATE `chyba` SET `errors` = '".$count."', date = NOW() WHERE `ip`='".$ip."'");
+				mysqli_query($dataconection, "UPDATE `chyba` SET `errors` = '".$count."', date = NOW() WHERE `ip`='".$ip."'");
 			} else {
 // V případě, že uživatel ještě nechyboval přidame nový záznam
-				mysql_query("INSERT INTO `chyba` (`ip`,`date`,`errors`) VALUES('".$ip."',NOW(),'1')");
+				mysqli_query($dataconection, "INSERT INTO `chyba` (`ip`,`date`,`errors`) VALUES('".$ip."',NOW(),'1')");
 			}
 			
 			exit("Je nám líto, zadali jste chybné uživatelské jméno nebo heslo");

@@ -47,8 +47,8 @@ if(!empty($_SESSION['login']) and !empty($_SESSION['heslo']))
 {
 	$login = $_SESSION['login'];
     $heslo = $_SESSION['heslo'];
-    $q_ava = mysql_query("SELECT `id`,`avatar` FROM `users` WHERE `login` = '".$login."' AND `pass` = '".$heslo."'"); 
-    $r_ava = mysql_fetch_array($q_ava);
+    $q_ava = mysqli_query($dataconection,"SELECT `id`,`avatar` FROM `users` WHERE `login` = '".$login."' AND `pass` = '".$heslo."'"); 
+    $r_ava = mysqli_fetch_array($q_ava,MYSQLI_ASSOC);
 }
 
 

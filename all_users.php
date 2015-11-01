@@ -11,12 +11,12 @@ if(!empty($_SESSION['login']) AND !empty($_SESSION['heslo']))
 // Dál ověřime, zda jsou tyto údaje platné
 			$login = $_SESSION['login'];
 			$heslo = $_SESSION['heslo'];
-			$over = mysql_query("SELECT `id` FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."'");
+			$over = mysqli_query($dataconection, "SELECT `id` FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."'");
 			
 // Pokud najdeme identifikator s tímto loginem a heslem uložime ho do pole $res_over
-			if(mysql_num_rows($over)!=0)
+			if(mysqli_num_rows($over)!=0)
 			{
-				$res_over = mysql_fetch_assoc($over);
+				$res_over = mysqli_fetch_assoc($over);
 			} else {
 // Jinak zobrazíme chybu
 				exit("Vstup na tuto stránku je povolen pouze přihlášeným uživatelům.");
@@ -44,10 +44,10 @@ echo '<div><a href="uzivatel.php?id='.$res_over['id'].'">Můj profil</a>
 | <a href="all_users.php">Seznam uživatelů</a> 
 | <a href="index.php?action=odhlasit_se">Odhlásit se</a></div>'; 
 
-$query = mysql_query("SELECT `id`,`login` FROM `users` ORDER BY `login` ASC");
-if(!$query) { echo mysql_error() . " - " . mysql_errno(); }
+$query = mysqli_query($dataconection, "SELECT `id`,`login` FROM `users` ORDER BY `login` ASC");
+if(!$query) { echo mysqli_error($dataconection) . " - " . mysqli_errno($dataconection); }
 else {
-	while($result = mysql_fetch_assoc($query))
+	while($result = mysqli_fetch_assoc($query))
 	{
 		echo "<div><a href=\"uzivatel.php?id=".$result['id']."\">".$result['login']."</a></div>";
 	}
