@@ -221,7 +221,7 @@ echo "table_list[".$ID_Company."] = '<div class=\"table_list\"><table class=\"la
 
 $controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM control_gateway WHERE ID_company = ".$ID_Company." AND x_deleted = '0' ORDER BY ID_control;");
 
-while ($company = mysqli_fetch_array($controls, mysqli_NUM)) {
+while ($company = mysqli_fetch_array($controls, MYSQLI_NUM)) {
 
 
 
@@ -241,7 +241,7 @@ if (!$result) {
     die('Invalid query: ' . mysqli_error($dataconection));
 }
 
-while ($row = mysqli_fetch_array($result, mysqli_NUM)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 if(empty($row[7])){
 $row[7]="Manual";
 }

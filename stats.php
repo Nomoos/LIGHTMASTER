@@ -29,7 +29,7 @@ WHERE Company.ID_company='".$ID_Company."' AND lamp.x_deleted = '0';");
 if (!$result) {
     die('Invalid query: ' . mysqli_error($dataconectios));
 }
-while ($lamp = mysqli_fetch_array($result, mysqli_NUM)) {
+while ($lamp = mysqli_fetch_array($result, MYSQLI_NUM)) {
 echo 'list_logs['.$ID_Company.']['.$lamp[0].']=[];';
 
 
@@ -37,7 +37,7 @@ $resultlogs = mysqli_query($dataconection, "SELECT logs.ID_lamp,logs.time,logs.w
 if (!$resultlogs) {
     die('Invalid query: ' . mysqli_error($dataconection));
 }
-while ($log = mysqli_fetch_array($resultlogs, mysqli_NUM)) {
+while ($log = mysqli_fetch_array($resultlogs, MYSQLI_NUM)) {
 echo 'list_logs['.$ID_Company.']['.$log[0].'].push(['.$log[1].','.$log[2].']);';
 
 }

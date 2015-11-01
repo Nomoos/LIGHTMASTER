@@ -196,13 +196,13 @@ if(!empty($ID_Company)){
 echo 'list_plans['.$ID_Company.'] = ["'.$name.'"];';
 
 $plans=mysqli_query($dataconection, "$dataconection, SELECT ID_PLAN,PLAN_NAME FROM Workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
-while ($plan = mysqli_fetch_array($plans, mysqli_NUM)) {
+while ($plan = mysqli_fetch_array($plans, MYSQLI_NUM)) {
 echo 'list_plans['.$ID_Company.']['.$plan[0].']=["'.$plan[1].'"];';
 $workloads=mysqli_query($dataconection, "SELECT switch_time, switch_workload
 FROM Plans
 WHERE ID_workload_plan =".$plan[0]."
 ORDER BY switch_time;");
-while ($workload = mysqli_fetch_array($workloads, mysqli_NUM)) {
+while ($workload = mysqli_fetch_array($workloads, MYSQLI_NUM)) {
 
 
 echo 'list_plans['.$ID_Company.']['.$plan[0].'].push(['.$workload[0].','.$workload[1].']);';
