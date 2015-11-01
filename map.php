@@ -334,7 +334,7 @@ if (!$controls) {
     die('</script><div class="error">Invalid query: ' . mysqli_error($dataconection).'</div><script>');
 }
 //company_list je seznam spolecnosti a obsahuje na indexu id_spolecnosti vsechny jejich kontrolery
-while ($company = mysqli_fetch_array($controls, MYSQL_NUM)) {
+while ($company = mysqli_fetch_array($controls, mysqli_NUM)) {
 echo 'company_list["'.$ID_Company.'"]['.$company[0].']= "'.$company[1].'";';
 };
 
@@ -344,12 +344,12 @@ if (!$plans) {
     die('</script><div class="error">Invalid query: ' . mysqli_error($dataconection).'</div><script>');
 } 
 //plan_list je seznam planu spolecnosti
-while ($plan = mysqli_fetch_array($plans, MYSQL_NUM)) {
+while ($plan = mysqli_fetch_array($plans, mysqli_NUM)) {
 echo 'plan_list["'.$ID_Company.'"]['.$plan[0].']= "'.$plan[1].'";';
 };
 echo 'plan_list["'.$ID_Company.'"][-1]= "Manual";';
 
-while ($row = mysqli_fetch_array($result, MYSQL_NUM)) {
+while ($row = mysqli_fetch_array($result, mysqli_NUM)) {
 if(!empty($row[0])){
 if($row[4]==1){
 echo 'lamps["'.$ID_Company.'"]['.$row[2].'] = L.marker(['.$row[0].', '.$row[1].'],{icon: lampIcon});';
@@ -637,7 +637,7 @@ map.on('draw:edited', function (e) {
 var layers = e.layers;
 layers.eachLayer(function (layer) {
         //do whatever you want, most likely save back to db
-        var layer = e.layer;
+        var layer = e.layers;
         var shape = layer.toGeoJSON()
         var shape_for_db = JSON.stringify(shape);
         console.log(shape_for_db)

@@ -65,7 +65,7 @@ $rules=array();
     
   $sql = "UPDATE `Rule_access`SET ".$temp."\n"
     . "WHERE ID_user= '".$account."'";
-    mysql_query($sql); 
+    mysqli_query($dataconection, $sql); 
     echo $sql;   
     echo "<br>".$account." - ".$temp."<br>";
   

@@ -11,12 +11,12 @@ if(!empty($_SESSION['login']) AND !empty($_SESSION['heslo']))
 // Dál ověřime, zda jsou tyto údaje platné
 			$login = $_SESSION['login'];
 			$heslo = $_SESSION['heslo'];
-			$over = mysql_query("SELECT `id` FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."'");
+			$over = mysqli_query($dataconection, "SELECT `id` FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."'");
 			
 // Pokud najdeme identifikator s tímto loginem a heslem uložime ho do pole $res_over
-			if(mysql_num_rows($over)!=0)
+			if(mysqli_num_rows($over)!=0)
 			{
-				$res_over = mysql_fetch_assoc($over);
+				$res_over = mysqli_fetch_assoc($over);
 				
 // Uložíme identifikator příjemce do proměnné $id	
 				if(isset($_POST['id']) AND $_POST['id']!='')
@@ -48,7 +48,7 @@ if(!empty($_SESSION['login']) AND !empty($_SESSION['heslo']))
 						exit("Vyplňte všechna pole");
 					}
 					
-					$query = mysql_query("INSERT INTO `message`(`odesilatel`,`prijemce`,`date`,`zprava`) VALUES('".$odesilatel."','".$prijemce."',NOW(),'".$zprava."')");
+					$query = mysqli_query($dataconection, "INSERT INTO `message`(`odesilatel`,`prijemce`,`date`,`zprava`) VALUES('".$odesilatel."','".$prijemce."',NOW(),'".$zprava."')");
 					if(!$query) 
 					{
 						echo "<script>alert('Zpráva se neodeslala.')</script>";
