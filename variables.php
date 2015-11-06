@@ -1,3 +1,3 @@
 <?php
-$_SERVER['SERVER_ROOT']='/LIGHTMASTER/';
+$_SERVER['SERVER_ROOT']='/www2/';
 ?>

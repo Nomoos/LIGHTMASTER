@@ -65,7 +65,7 @@ if(isset($_POST['submit']))
 				
 				$_headers  = 'MIME-Version: 1.0' . "\r\n";
 				$_headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-				$_headers .= 'From: <info@koding.cz>' . "\r\n";
+				$_headers .= 'From: <info@lightmaster.cz>' . "\r\n";
 	
 				if(@mail($_to, '=?UTF-8?B?'.base64_encode($_subject).'?=', $_message, $_headers))
 				{

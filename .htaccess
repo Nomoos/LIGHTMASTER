@@ -1,6 +1,7 @@
-DirectoryIndex index.html
+DirectoryIndex index.php
 #zakazuje prochazeni
 #Options -Indexes
+
 
 #odstranuje pripony
 #RewriteEngine on

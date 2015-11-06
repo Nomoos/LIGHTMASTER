@@ -181,7 +181,7 @@ $heslo = $heslo."g5ds8";
 				$_message = "<div style=\"font-size:11pt; font-family:Times New Roman; color:black; padding:5px;\"><div>Dobrý den,</div>";
 				$_message .= "<div style=\"text-indent:10px;\">děkuji Vám za registraci na portálu lightmaster.cz. Pro aktivaci vašeho účtu klikněte na odkaz: http://lamps.lightmaster.cz/www2/activation.php?login=".$login."&code=".$activation.".</div>";
 				$_message .= "<div style=\"margin:10px 0;\">Vaše uživatelské jméno: ".$login."</div>";
-				$_message .= "<div>S pozdravem, administrace koding.cz</div>";
+				$_message .= "<div>S pozdravem, administrace Lightmaster</div>";
 				
 				$_headers  = 'MIME-Version: 1.0' . "\r\n";
 				$_headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";

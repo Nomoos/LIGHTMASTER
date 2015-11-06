@@ -651,6 +651,9 @@ map.on('draw:created', function(e) {
       var shape_for_db = JSON.stringify(shape);
       console.log(shape_for_db)
   });
+map.on('draw:drawstart', function(e) {
+      console.log(e);
+  });
 // konec tesu editu polygonu
 
    
