@@ -142,7 +142,7 @@ if(isset($_POST['go'])){
 				setcookie("id", $r1['id'], time()+60*60*2);
             }                
             
-            header("Location: ".$_SERVER['SERVER_ROOT']."map.php");
+            header("Location: ".$_SERVER['SERVER_ROOT']."");
 		}
 	}
 
@@ -150,5 +150,5 @@ if(isset($_POST['go'])){
 
 	
 
-} else { header("Location: ".$_SERVER['SERVER_ROOT']."index.php"); }
+} else { header("Location: ".$_SERVER['SERVER_ROOT'].""); }
 ?>

@@ -1,5 +1,5 @@
 <?php
-
+if($_SESSION['id']){
 $result = mysqli_query($dataconection, "SELECT * 
 FROM  `users` 
 LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.ID_user
@@ -61,5 +61,9 @@ extract($row);
 </div>
   </div>
   <script>document.getElementById("company").value;</script>
-  '
+  ';
+  
+  }else{
+  echo 'Neprihlasen.';
+  }
 ?>

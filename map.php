@@ -1,6 +1,4 @@
-<?php
-require_once 'pristup.php';
-?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,6 +22,9 @@ require_once 'pristup.php';
 <!-- testy -->
 <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.4/Leaflet.fullscreen.min.js'></script>
 <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.4/leaflet.fullscreen.css' rel='stylesheet' />
+<!-- google -->
+<script src="http://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
+<script src="http://matchingnotes.com/javascripts/leaflet-google.js"></script>
 
 <style>
  .maps{
@@ -188,15 +189,19 @@ echo 'select_company=document.getElementById("company").value;';
 	
 // create a map in the "map" div, set the view to a given place and zoom
 //var map = L.map('map').setView([49.5939, 17.2655], 13);
+
+
 var markers = new L.LayerGroup().addTo(map);
 //global variable
 var edited_lamp=0;
 var new_lamp=0;
 var lamps = [];
 // add an OpenStreetMap tile layer
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+
+ //<!-- google-->
+//var googleLayer = new L.Google('SATELLITE');
+//map.addLayer(googleLayer);
 
 
 //icon
