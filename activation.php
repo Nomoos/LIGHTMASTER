@@ -21,7 +21,7 @@ if(isset($_GET['login']) AND isset($_GET['code']))
 		{
 			
 // Pokud tyto kódy odpovídají, aktualizujeme tabulku users a nastavíme pole activation na 1. ( 1 - uživatel aktivován, 0 - uživatel není aktivován )
-			$query1 = mysqli_query("UPDATE `users` SET `activation`=1 WHERE `login`='".$login."'");
+			$query1 = mysqli_query($dataconection, "UPDATE `users` SET `activation`=1 WHERE `login`='".$login."'");
 			if(!$query1) { echo mysqli_error($dataconection) . " - " . mysqli_errno($dataconection); }
 			else {
 				echo "Váš e-mail byl úspěšně potvrzen, teď se můžete <a href=\"index.php\">přihlásit</a>.";
