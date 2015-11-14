@@ -1,7 +1,12 @@
 <?php
-header('Content-type: text/html;charset=UTF-8'); 
-//Vložíme soubor s připojením k databázi. ( musí se nacházet ve stejné složce )		
+session_start(); 
+require_once 'db.php';
 require_once 'pristup.php';
+require_once 'variables.php' ; 
+
+//Vložíme soubor s připojením k databázi. ( musí se nacházet ve stejné složce )		
+
+
 if(isset($_POST['submit']))
 {
 $rules=array();
@@ -123,7 +128,7 @@ background:rgb(201, 159, 106);
 <div class="space50">
 </div>
 <div class="menu_container">';
-$_SERVER['SERVER_ROOT']='/www2/';
+
 
 require_once 'module/usermenu.php';
 require_once 'module/menu.php';
