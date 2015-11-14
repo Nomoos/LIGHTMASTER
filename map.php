@@ -1,6 +1,3 @@
-<?php
-require_once 'pristup.php';
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,13 +7,24 @@ require_once 'pristup.php';
 	<title>Map</title>
 <!-- js knihovny -->
 <script src="lib/leaflet/leaflet.js"></script>
+
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
 <script src="lib/js/jquery.js"></script>
 <script src="module/myscript.js"></script>
 <!-- styly -->
 <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
 <link rel="stylesheet" href="css/css/kraken.css" />
 <link rel="stylesheet" href="css/map.css" />
 <link rel="shortcut icon" href="img/sviti.png" />	
+
+<!-- testy -->
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.4/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.4/leaflet.fullscreen.css' rel='stylesheet' />
+<!-- google -->
+<script src="http://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
+<script src="http://matchingnotes.com/javascripts/leaflet-google.js"></script>
+
 <style>
  .maps{
  
@@ -73,7 +81,7 @@ echo 'document.getElementById("company").value='.$_POST['select_company'].';';
 }else{
 echo 'console.log("Je POST není vybraná společnost.");';
 }
-//spolecnost
+//zoom
 If(!empty($_POST['zoom'])){
 echo 'var map = L.map(\'map\').setView(['.$_POST['lat_default'].', '.$_POST['lng_default'].'], '.$_POST['zoom'].');';
 
@@ -87,14 +95,14 @@ If(!empty($_POST['lamp_id'])){
 //v postu je status
 If(!empty($_POST['status'])){
 
-//status lamp
+//status lamp switch
 If($_POST['status']=="switch_status"){
 If(!empty($_POST['lamp_status'])){
 If($_POST['lamp_status']=='-1'){
 $_POST['lamp_status']=0;
 }
 echo "console.log('Přepinam do stavu".$_POST['lamp_status']."');";
-mysql_query("UPDATE lamp SET is_enabled =".$_POST['lamp_status']." WHERE id = ".$_POST['lamp_id'].";");
+mysqli_query($dataconection, "UPDATE lamp SET is_enabled =".$_POST['lamp_status']." WHERE id = ".$_POST['lamp_id'].";");
 }else{
 echo "console.log('Status lampy nedostupny');";
 }
@@ -102,17 +110,17 @@ echo "console.log('Status lampy nedostupny');";
 echo "console.log('Status :".$_POST['status']."');";
 }
 
-//create lamp
+//status create lamp
 If($_POST['status']=="create"){
   If($_POST['lamp_status']=='-1'){
   $_POST['lamp_status']=0;
   }
 //if new controler  
   If($_POST['control']=="new"){
-   mysql_query("INSERT INTO Control_gateway (ID_company, Name_control) VALUES ('".$_POST['select_company']."', '".$_POST['control_name']."');");
-   $result=mysql_query("SELECT ID_control FROM Control_gateway ORDER BY ID_control DESC 
+   mysqli_query($dataconection, "INSERT INTO control_gateway (ID_company, Name_control) VALUES ('".$_POST['select_company']."', '".$_POST['control_name']."');");
+   $result=mysqli_query($dataconection, "SELECT ID_control FROM control_gateway ORDER BY ID_control DESC 
 LIMIT 0 , 1 ");
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 $_POST['control']=$row[0];
 echo 'console.log("'.$row[0].'");';
   }      
@@ -121,16 +129,16 @@ If($_POST['lamp_id']=="new"){
 
 echo 'console.log("tady");';
 If($_POST['plan']=='-1'){
-mysql_query("INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`, `set_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_POST['workload'].");");
+mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`, `set_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_POST['workload'].");");
 }else{
-mysql_query("INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].");");
+mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].");");
 }
-$result=mysql_query("SELECT id FROM  `lamp` ORDER BY id DESC LIMIT 0 , 1;");
-$row = mysql_fetch_array($result);
+$result=mysqli_query($dataconection, "SELECT id FROM  `lamp` ORDER BY id DESC LIMIT 0 , 1;");
+$row = mysqli_fetch_array($result);
 $_POST['lamp_id']=$row[0];
 }else{
 If($_POST['plan']=='-1'){
-mysql_query("UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
+mysqli_query($dataconection, "UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
 `long` =  ".$_POST['lat'].",
 `lat` =  ".$_POST['lng'].",
 `ID_control` =  ".$_POST['control'].",
@@ -138,7 +146,7 @@ mysql_query("UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['l
 `ID_workload` =  ".$_POST['plan']."
  WHERE id = ".$_POST['lamp_id'].";");
  }else{
-  mysql_query("UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
+  mysqli_query($dataconection, "UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
 `long` =  ".$_POST['lat'].",
 `lat` =  ".$_POST['lng'].",
 `ID_control` =  ".$_POST['control'].",
@@ -155,7 +163,7 @@ echo "console.log('Status :".$_POST['status']."');";
 //delete lamp
 If($_POST['status']=="delete"){
 echo 'console.log("UPDATE lamp SET x_deleted =\'0\' WHERE id = \"'.$_POST['lamp_id'].'\";");';
-mysql_query("UPDATE lamp SET x_deleted ='1' WHERE id = ".$_POST['lamp_id'].";");
+mysqli_query($dataconection, "UPDATE lamp SET x_deleted ='1' WHERE id = ".$_POST['lamp_id'].";");
 
 }else{
 echo "console.log('Status :".$_POST['status']."');";
@@ -180,15 +188,19 @@ echo 'select_company=document.getElementById("company").value;';
 	
 // create a map in the "map" div, set the view to a given place and zoom
 //var map = L.map('map').setView([49.5939, 17.2655], 13);
+
+
 var markers = new L.LayerGroup().addTo(map);
 //global variable
 var edited_lamp=0;
 var new_lamp=0;
 var lamps = [];
 // add an OpenStreetMap tile layer
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+
+ //<!-- google-->
+//var googleLayer = new L.Google('SATELLITE');
+//map.addLayer(googleLayer);
 
 
 //icon
@@ -217,6 +229,7 @@ unselect_all();
 new_lamp=1;
 document.getElementById("newlamp").innerHTML = '<span style="font-weight: bold">Pro vytvoření nové lampy klikněte do mapy.</span><br><button class="buttons pulk" type="Cancel_btt" onclick="new_lamp=0;create_lamp_button();">Zrušit</button>';
 }
+
 function create_lamp_button(){
  document.getElementById("newlamp").innerHTML = '<button id="new_lamp_btt" class="buttons" type="newlamp_btt" onclick="create_lamp();" style="width:100%;">Nová lampa</button>';
 }
@@ -310,37 +323,37 @@ echo 'lamps["'.$ID_Company.'"]=[];';
 echo 'company_list["'.$ID_Company.'"]=[];';
 echo 'plan_list["'.$ID_Company.'"]=[];';
 
-$result = mysql_query("SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,Workload_plan.ID_PLAN,Workload_plan.PLAN_NAME,lamp.set_workload FROM `Company`
-LEFT OUTER JOIN Control_gateway AS Gate ON Gate.ID_company = Company.ID_company
+$result = mysqli_query($dataconection, "SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,workload_plan.ID_PLAN,workload_plan.PLAN_NAME,lamp.set_workload FROM `company`
+LEFT OUTER JOIN control_gateway AS Gate ON Gate.ID_company = company.ID_company
 LEFT OUTER JOIN lamp ON lamp.ID_control = Gate.ID_control
-LEFT OUTER JOIN Workload_plan ON Workload_plan.ID_PLAN = lamp.ID_workload
-WHERE Company.ID_company=".$ID_Company." AND lamp.x_deleted = '0';");
-if (!$result) {
+LEFT OUTER JOIN workload_plan ON workload_plan.ID_PLAN = lamp.ID_workload
+WHERE company.ID_company= ".$ID_Company." AND lamp.x_deleted = '0';");
+if (!$result) { 
     echo 'console.log("'.$ID_Company.'");';
-    die('Invalid query: ' . mysql_error());
-}  
+    die('console.log("Invalid query: ' . mysqli_error($dataconection).'");');
+} 
 
-$controls=mysql_query("SELECT ID_control,Name_control FROM Control_gateway WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
+$controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM control_gateway WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
 if (!$controls) {
-    die('Invalid query: ' . mysql_error());
+    die('</script><div class="error">Invalid query: ' . mysqli_error($dataconection).'</div><script>');
 }
 //company_list je seznam spolecnosti a obsahuje na indexu id_spolecnosti vsechny jejich kontrolery
-while ($company = mysql_fetch_array($controls, MYSQL_NUM)) {
+while ($company = mysqli_fetch_array($controls, MYSQLI_NUM)) {
 echo 'company_list["'.$ID_Company.'"]['.$company[0].']= "'.$company[1].'";';
 };
 
 
-$plans=mysql_query("SELECT ID_PLAN,PLAN_NAME FROM Workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
+$plans=mysqli_query($dataconection, "SELECT ID_PLAN,PLAN_NAME FROM workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
 if (!$plans) {
-    die('Invalid query: ' . mysql_error());
+    die('</script><div class="error">Invalid query: ' . mysqli_error($dataconection).'</div><script>');
 } 
 //plan_list je seznam planu spolecnosti
-while ($plan = mysql_fetch_array($plans, MYSQL_NUM)) {
+while ($plan = mysqli_fetch_array($plans, MYSQLI_NUM)) {
 echo 'plan_list["'.$ID_Company.'"]['.$plan[0].']= "'.$plan[1].'";';
 };
 echo 'plan_list["'.$ID_Company.'"][-1]= "Manual";';
 
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 if(!empty($row[0])){
 if($row[4]==1){
 echo 'lamps["'.$ID_Company.'"]['.$row[2].'] = L.marker(['.$row[0].', '.$row[1].'],{icon: lampIcon});';
@@ -349,8 +362,8 @@ echo 'lamps["'.$ID_Company.'"]['.$row[2].'] = L.marker(['.$row[0].', '.$row[1].'
 }
 echo'lamps["'.$ID_Company.'"]['.$row[2].'].gate = "'.$row[3].'";';
 
-$actual_workload=mysql_query("SELECT logs.workload FROM `logs` WHERE logs.ID_lamp ='".$row[2]."' ORDER by logs.time DESC;");
-$actual_workload=mysql_fetch_array($actual_workload);
+$actual_workload=mysqli_query($dataconection, "SELECT logs.workload FROM `logs` WHERE logs.ID_lamp ='".$row[2]."' ORDER by logs.time DESC;");
+$actual_workload=mysqli_fetch_array($actual_workload);
 if(!empty($actual_workload[0])){
 echo'lamps["'.$ID_Company.'"]['.$row[2].'].actual_workload = "'.$actual_workload[0].'";';
 }else{
@@ -413,6 +426,7 @@ function edit_lamp(id) {
       }
     select=select+'<option value="new">Nový kontroler</option></select><div id="new_input"></div>';
     
+    
     if(lamps[select_company][id].enabled=="1"){
     enabled='<input id="check" style="check" type="checkbox" name="status" value="1" onclick="change_status('+id+');" checked>';
     }else{
@@ -442,6 +456,11 @@ function edit_lamp(id) {
     
     
     document.getElementById("lampid").innerHTML = '<div class="description_lamp"><div >ID Lampy:</div> '+id+'<div class="nazev_atributu">Kontroluje:</div>'+select+'<div class="nazev_atributu">Zapnutá:</div>'+enabled+workload+'<div id="cords"></div></div>';
+    // pokud společnost nemá kontroler tak vytvarime spolu z lampou nový
+    if (company_list[select_company].length == 0){
+    new_controler("new");
+    }
+    //staré lampy
     if(id!='new'){
     document.getElementById(lamps[select_company][id].gate).selected =true;    
      }
@@ -455,6 +474,7 @@ function edit_lamp(id) {
     }else{
     document.getElementById("buttons").innerHTML = '<button class="buttons pulka" type="Save_btt" onclick="save_lamp('+id+')">Uložit</button><button class="buttons pulka" type="Cancel_btt" onclick="cancel_edit('+id+')">Zrušit</button>';
     }
+    
 };
 
 function change_status(id){
@@ -596,7 +616,51 @@ edit_lamp('new');
 if(select_company==""){
 
 document.getElementById("content_container").innerHTML='NEJSTE ČLENEM ŽÁDNÉ SPOLECNOSTI POZÁDEJTE ADMINA VASÍ SPOLECNOSTI O PŘIDÁNI NEBO SI ZAKUPTE LICENCI PRO NOVOU SPOLEČNOST';
-}   
+}
+
+//testy editovani polygonu
+var featureGroup = L.featureGroup().addTo(map);
+drawControl = new L.Control.Draw({
+    draw : {
+        polygon : {
+          //barva plochy
+          shapeOptions: {color: '#FF55FF'}
+        },
+        polyline : false,
+        rectangle : false,
+        circle : false,
+        marker : false
+    },
+    edit : {
+      featureGroup: featureGroup
+    },
+     position : 'topleft'
+});
+map.addControl(drawControl);
+map.on('draw:edited', function (e) {
+var layers = e.layers;
+layers.eachLayer(function (layer) {
+        //do whatever you want, most likely save back to db
+        var layer = e.layers;
+        var shape = layer.toGeoJSON()
+        var shape_for_db = JSON.stringify(shape);
+        console.log(shape_for_db)
+    });
+}); 
+map.on('draw:created', function(e) {
+      featureGroup.addLayer(e.layer);
+      
+      var layer = e.layer;
+      var shape = layer.toGeoJSON()
+      var shape_for_db = JSON.stringify(shape);
+      console.log(shape_for_db)
+  });
+map.on('draw:drawstart', function(e) {
+      console.log(e);
+  });
+// konec tesu editu polygonu
+
+   
 </script>
 </div>
   </body>

@@ -1,7 +1,12 @@
 <?php
-header('Content-type: text/html;charset=UTF-8'); 
-//Vložíme soubor s připojením k databázi. ( musí se nacházet ve stejné složce )		
+session_start(); 
+require_once 'db.php';
 require_once 'pristup.php';
+require_once 'variables.php' ; 
+
+//Vložíme soubor s připojením k databázi. ( musí se nacházet ve stejné složce )		
+
+
 if(isset($_POST['submit']))
 {
 $rules=array();
@@ -48,7 +53,7 @@ $rules=array();
     
   $sql = "UPDATE `Rule_access`SET ".$temp."\n"
     . "WHERE ID_user= '".$account."'";
-    mysql_query($sql); 
+    mysqli_query($dataconection, $sql); 
     #echo $sql;   
     #echo "<br>".$account." - ".$temp."<br>";
   
@@ -123,14 +128,14 @@ background:rgb(201, 159, 106);
 <div class="space50">
 </div>
 <div class="menu_container">';
-$_SERVER['SERVER_ROOT']='/www2/';
+
 
 require_once 'module/usermenu.php';
 require_once 'module/menu.php';
 echo '</div>';
-$result = mysql_query("SELECT * 
+$result = mysqli_query($dataconection, "SELECT * 
 FROM  `users` 
-LEFT OUTER JOIN Rule_access AS Rule ON users.id = Rule.ID_user");
+LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.ID_user");
 echo '<div class="content_container">';
 echo "<div class='trans_table'>";
 echo "<table class='rule_table'><tr class='frist_table_row row'><td class='frist_cell head_row'>Jméno</td><td class='head_row'>Email</td>";
@@ -139,7 +144,7 @@ echo"<td class='head_row'>Super admin</td><td class='head_row'>View lamp</td><td
 
 echo "<form action=\"\" method=\"POST\">";
 $even = 'odd';
-While( $row = mysql_fetch_array($result) )
+While( $row = mysqli_fetch_array($result) )
 {
 extract($row);
 
