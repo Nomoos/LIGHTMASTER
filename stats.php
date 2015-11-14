@@ -12,7 +12,7 @@ require_once 'pristup.php';
 <?php
 
 //vstup pro generováni logu
-//mysql_query("INSERT INTO  logs (`ID_lamp` ,`time` ,`workload`) VALUES ();");
+//mysqli_query($dataconection, "INSERT INTO  logs (`ID_lamp` ,`time` ,`workload`) VALUES ();");
 
 
 
@@ -22,22 +22,22 @@ if(!empty($ID_Company)){
 echo 'list_logs['.$ID_Company.'] = [];';
 
 
-$result = mysql_query("SELECT lamp.id FROM `Company`
+$result = mysqli_query($dataconection, "SELECT lamp.id FROM `Company`
 LEFT OUTER JOIN Control_gateway AS Gate ON Gate.ID_company = Company.ID_company
 LEFT OUTER JOIN lamp ON lamp.ID_control = Gate.ID_control
 WHERE Company.ID_company='".$ID_Company."' AND lamp.x_deleted = '0';");
 if (!$result) {
-    die('Invalid query: ' . mysql_error());
+    die('Invalid query: ' . mysqli_error($dataconectios));
 }
-while ($lamp = mysql_fetch_array($result, MYSQL_NUM)) {
+while ($lamp = mysqli_fetch_array($result, MYSQLI_NUM)) {
 echo 'list_logs['.$ID_Company.']['.$lamp[0].']=[];';
 
 
-$resultlogs = mysql_query("SELECT logs.ID_lamp,logs.time,logs.workload FROM `logs` WHERE logs.ID_lamp ='".$lamp[0]."' ORDER by logs.time;");
+$resultlogs = mysqli_query($dataconection, "SELECT logs.ID_lamp,logs.time,logs.workload FROM `logs` WHERE logs.ID_lamp ='".$lamp[0]."' ORDER by logs.time;");
 if (!$resultlogs) {
-    die('Invalid query: ' . mysql_error());
+    die('Invalid query: ' . mysqli_error($dataconection));
 }
-while ($log = mysql_fetch_array($resultlogs, MYSQL_NUM)) {
+while ($log = mysqli_fetch_array($resultlogs, MYSQLI_NUM)) {
 echo 'list_logs['.$ID_Company.']['.$log[0].'].push(['.$log[1].','.$log[2].']);';
 
 }

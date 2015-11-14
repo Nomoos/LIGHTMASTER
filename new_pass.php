@@ -40,8 +40,8 @@ if(isset($_POST['submit']))
 	{
 		
 // Vybereme z databáze identifikátor uživatele s zadaným loginem a emailem a ověříme, zda je jeho účet aktivován
-		$query = mysql_query("SELECT `id` FROM `users` WHERE `login`='".$login."' AND `email`='".$email."' AND `activation`=1");
-		if(mysql_num_rows($query)!=0)
+		$query = mysqli_query($dataconection, "SELECT `id` FROM `users` WHERE `login`='".$login."' AND `email`='".$email."' AND `activation`=1");
+		if(mysqli_num_rows($query)!=0)
 		{
 // Vygenerujeme nové heslo, do proměnné $date uložíme dnešní datum a čas
 			$date = date('YmdHis');
@@ -51,8 +51,8 @@ if(isset($_POST['submit']))
 			$new_password = substr($new_password,2,6);
 // Zašifrujeme ho jako obvykle a uložíme do DB		
 			$new_password_enc = strrev(md5($new_password))."g5ds8";
-			$query1 = mysql_query("UPDATE `users` SET `pass`='".$new_password_enc."' WHERE `login`='".$login."'");
-			if(!$query1) { echo mysql_error() . " - " . mysql_errno(); }
+			$query1 = mysqli_query($dataconection, "UPDATE `users` SET `pass`='".$new_password_enc."' WHERE `login`='".$login."'");
+			if(!$query1) { echo mysqli_error($dataconection) . " - " . mysqli_errno($dataconection); }
 			else {
 // Pošleme uživateli e-mail s novým heslem				
 				$_to = $email;
@@ -65,7 +65,7 @@ if(isset($_POST['submit']))
 				
 				$_headers  = 'MIME-Version: 1.0' . "\r\n";
 				$_headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-				$_headers .= 'From: <info@koding.cz>' . "\r\n";
+				$_headers .= 'From: <info@lightmaster.cz>' . "\r\n";
 	
 				if(@mail($_to, '=?UTF-8?B?'.base64_encode($_subject).'?=', $_message, $_headers))
 				{

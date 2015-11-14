@@ -65,7 +65,7 @@ $rules=array();
     
   $sql = "UPDATE `Rule_access`SET ".$temp."\n"
     . "WHERE ID_user= '".$account."'";
-    mysql_query($sql); 
+    mysqli_query($dataconection, $sql); 
     echo $sql;   
     echo "<br>".$account." - ".$temp."<br>";
   
@@ -104,20 +104,22 @@ echo '<div><a href="uzivatel.php?id='.$_SESSION['id'].'">Můj profil</a>
 | <a href="all_users.php">Seznam uživatelů</a> 
 | <a href="index.php?action=odhlasit_se">Odhlásit se</a></div>';
 
-$result = mysql_query("SELECT * 
+$result = mysqli_query($dataconection, "SELECT * 
 FROM  `users` 
-LEFT OUTER JOIN Rule_access AS Rule ON users.id = Rule.ID_user");
+LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.ID_user");
 echo "<div >";
 echo "<div class='trans_table'>";
-echo "<table><tr><td>Email</td><td>Super admin</td><td>View lamp</td><td>Edit lamp</td><td>Edit rule</td></tr>";
+echo "<table><tr><td>Jméno</td><td>Email</td><td>Super admin</td><td>View lamp</td><td>Edit lamp</td><td>Edit rule</td></tr>";
 
 echo "<form action=\"\" method=\"POST\">";
-While( $row = mysql_fetch_array($result) )
+While( $row = mysqli_fetch_array($result) )
 {
 extract($row);
 
 
-echo "<tr>";
+echo "<tr>";   
+
+echo "<td>".$name."</td>";
 echo "<td>".$email."</td>";
 If($Super_admin==1)
 {

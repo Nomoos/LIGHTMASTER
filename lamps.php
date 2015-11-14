@@ -219,9 +219,9 @@ foreach($_SESSION['company'] as $ID_Company => $name ){
 if(!empty($ID_Company)){
 echo "table_list[".$ID_Company."] = '<div class=\"table_list\"><table class=\"lamp_table\">";
 
-$controls=mysql_query("SELECT ID_control,Name_control FROM Control_gateway WHERE ID_company = ".$ID_Company." AND x_deleted = '0' ORDER BY ID_control;");
+$controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM control_gateway WHERE ID_company = ".$ID_Company." AND x_deleted = '0' ORDER BY ID_control;");
 
-while ($company = mysql_fetch_array($controls, MYSQL_NUM)) {
+while ($company = mysqli_fetch_array($controls, MYSQLI_NUM)) {
 
 
 
@@ -232,16 +232,16 @@ echo "<caption class=\"caption\">Kontrolní bod ".$company[1]."</caption>";
 $even=0;
 echo '<tr class="frist_table_row row"><th class="frist_cell head_row cell">ID</th><th class="head_row cell">Šířka</th><th class="head_row cell">Délka</th><th class="head_row cell">Zapnutá</th><th class="even cell">Aktuální vytížení</td><th class="even cell">Nastavené vytížení</td><td class="even cell">Nastavený plán</td></tr>';
 
-$result = mysql_query("SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,lamp.actual_workload,lamp.set_workload,Workload_plan.PLAN_NAME FROM `Company`
+$result = mysqli_query($dataconection, "SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,lamp.actual_workload,lamp.set_workload,Workload_plan.PLAN_NAME FROM `Company`
 LEFT OUTER JOIN Control_gateway AS Gate ON Gate.ID_company = Company.ID_company
 LEFT OUTER JOIN lamp ON lamp.ID_control = Gate.ID_control
 LEFT OUTER JOIN Workload_plan ON Workload_plan.ID_PLAN = lamp.ID_workload
 WHERE Gate.ID_control='".$company[0]."' AND lamp.x_deleted = '0';");
 if (!$result) {
-    die('Invalid query: ' . mysql_error());
+    die('Invalid query: ' . mysqli_error($dataconection));
 }
 
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 if(empty($row[7])){
 $row[7]="Manual";
 }
