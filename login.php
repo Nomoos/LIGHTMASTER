@@ -2,43 +2,30 @@
 session_start(); 
 include "variables.php";
 //Celý postup funguje na sessions. Právě v session se ukládají data uživatele, zatímco se nacházi na stránkach. Je důležite spustit sessions na začátku stránky!  
-if (isset($_GET['p'])){
-$_SESSION['page']=$_GET['p'];
-header("Location: ".$_SERVER['SERVER_ROOT']."");
-exit;
-}
-
-if (isset($_GET['z'])){
-$_SESSION['zone']=$_GET['z'];
-header("Location: ".$_SERVER['SERVER_ROOT']."");
-exit;
-}
 
 if (isset($_GET['action'])){
 if($_GET['action']=='odhlasit_se'){
-  $_SESSION['zone']='';
-  $_SESSION['page']='';
+
 	$_SESSION['login']='';
 	$_SESSION['heslo']='';
 	$_SESSION['id']='';
 	unset($_SESSION['login']);
 	unset($_SESSION['heslo']);
 	unset($_SESSION['id']);
-  unset($_SESSION['page']);
-	unset($_SESSION['zone']);
 	
 /***************NOVÉ*********************/
 
 	setcookie("auto", "", time()+9999999);
 	
 /***************KONEC NOVÉHO*********************/
+
 }
 }
+
 //Vložíme soubor s připojením k databázi. ( musí se nacházet ve stejné složce )	
 require_once 'db.php';
-
-if(!array_key_exists("page",$_SESSION)){
-
+ 
+ 
 /***************NOVÉ*********************/
  
 // Pokud v COOKIE jsou proměnné pro automatické přihlášení 
@@ -149,39 +136,17 @@ echo '<div class="back"><input class="button" type="button" onclick=\'window.loc
     float: right;
     width: 49%;
 "></div>'; 
+
+/*--------------NOVÉ----------------------*/
+
+//echo '<br><div class="back"><a href="new_pass.php">Zapomněli jste heslo?</a></div></div>';   
+
+/*--------------KONEC NOVÉHO----------------------*/
 	
 } else {
-$_SESSION['page']=$PAGEAFTERLOGGIN;
-echo "<script>location=".$_SERVER['SERVER_ROOT']."</script>";   
-}
-//když je nastavená stránka
-}else{
-
-$pages = [
-    "map" => "map.php",
-    "lamps" => "lamps.php",
-    "stats" => "lamps.php",    
-    "plans" => "map.php",
-    "users" => "lamps.php",
-    "company" => "lamps.php",    
-    "zones" => "zones.php",
-    
-];
-$pageset = 0;
-foreach ($pages as $key => $value) {
-
-if($_SESSION['page']==$key){
-    echo $key;
-    require_once $value;
-    $pageset = 1;
-}
-}
-if(0==$pageset){
-  //unset($_SESSION['page']);
-  echo "<script>console.log('Stránka ".$_SESSION['page']." neexistuje')</script>";
-  
-} 
-
+echo '<script>
+window.location.href="map.php";
+</script>;';      
 }
 ?>
 	

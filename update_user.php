@@ -15,12 +15,12 @@ require_once 'db.php';
 // Dál ověřime, zda jsou tyto údaje platné
 			$login = $_SESSION['login'];
 			$heslo = $_SESSION['heslo'];
-			$over = mysql_query("SELECT `id` FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."'");
+			$over = mysqli_query($dataconection, "SELECT `id` FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."'");
 			
 // Pokud najdeme identifikator s tímto loginem a heslem uložime ho do pole $res_over
-			if(mysql_num_rows($over)!=0)
+			if(mysqli_num_rows($over)!=0)
 			{
-				$res_over = mysql_fetch_assoc($over);	
+				$res_over = mysqli_fetch_assoc($over);	
 				
 // Do proměnné $old_login uložíme stávající přihlášovací jméno
 				$old_login = $_SESSION['login'];
@@ -40,21 +40,21 @@ require_once 'db.php';
 // ošetříme ho a uložíme do proměnné $login
 					$login = stripslashes(htmlspecialchars(trim($_POST['login'])));
 // Ověřime, zda se jíž nepoužíva
-					$query = mysql_query("SELECT `id` FROM `users` WHERE `login`='".$login."'");
+					$query = mysqli_query($dataconection, "SELECT `id` FROM `users` WHERE `login`='".$login."'");
 // Pokud je toto jméno v databází
-					if(mysql_num_rows($query)!=0)
+					if(mysqli_num_rows($query)!=0)
 					{
 // Zobrazíme hlášení
 						exit("Toto uživatelské jméno je jíž v databázi, zkuste jiné.");
 					} else {
 						
 // Pokud není tak aktualizujeme tabulku users a nastavíme login se rovná nový login
-						$query1 = mysql_query("UPDATE `users` SET `login`='".$login."' WHERE `login`='".$old_login."'");
-						if(!$query1) { echo mysql_error() . " - " . mysql_errno(); }
+						$query1 = mysqli_query($dataconection, "UPDATE `users` SET `login`='".$login."' WHERE `login`='".$old_login."'");
+						if(!$query1) { echo mysqli_error($dataconection) . " - " . mysqli_errno($dataconection); }
 						else {
 							
 // Jestli změna proběhla vpořádku taktéž musíme aktualizovat tabulku se zprávami, kde aktualizujeme jméno odesílatele
-							$query2 = mysql_query("UPDATE `message` SET `odesilatel`='".$login."' WHERE `odesilatel`='".$old_login."'");
+							$query2 = mysqli_query($dataconection, "UPDATE `message` SET `odesilatel`='".$login."' WHERE `odesilatel`='".$old_login."'");
 // Uložíme nové přihlášovací jméno do sessions
 							$_SESSION['login'] = $login; 
 
@@ -95,8 +95,8 @@ require_once 'db.php';
 					$heslo    = $heslo."g5ds8";		
 
 // Aktualizujeme tabulku users					
-					$query3 = mysql_query("UPDATE `users` SET `pass`='".$heslo."' WHERE `login`='".$login."'");		
-					if(!$query3) { echo mysql_error() . " - " . mysql_errno(); }	
+					$query3 = mysqli_query($dataconection, "UPDATE `users` SET `pass`='".$heslo."' WHERE `login`='".$login."'");		
+					if(!$query3) { echo mysqli_error($dataconection) . " - " . mysqli_errno($dataconection); }	
 					else {
 // Uložíme nové heslo do sessions
 						$_SESSION['heslo'] = $heslo;
@@ -134,8 +134,8 @@ require_once 'db.php';
 						$avatar = 'no_avatar.jpg';
 						
 // Vybereme stávající obrázek uživatele
-						$query4 = mysql_query("SELECT `avatar` FROM `users` WHERE `login`='".$login."'");
-						$result4 = mysql_fetch_assoc($query4);
+						$query4 = mysqli_query($dataconection, "SELECT `avatar` FROM `users` WHERE `login`='".$login."'");
+						$result4 = mysqli_fetch_assoc($query4);
 						
 // Pokud je obrázek defaultní tak ho nechceme odstranít, protože je jeden pro všechny 						
 						if($result4['avatar'] == $def_ava)
@@ -171,8 +171,8 @@ require_once 'db.php';
 /*** Odstraníme starý obrázek	***/	
 				
 // Vybereme stávající obrázek uživatele
-						$query5 = mysql_query("SELECT `avatar` FROM `users` WHERE `login`='".$login."'");
-						$result5 = mysql_fetch_assoc($query5);
+						$query5 = mysqli_query($dataconection, "SELECT `avatar` FROM `users` WHERE `login`='".$login."'");
+						$result5 = mysqli_fetch_assoc($query5);
 						
 // Pokud je obrázek defaultní tak ho nechceme odstranít, protože je jeden pro všechny 						
 						if($result5['avatar'] == $def_ava)
@@ -186,8 +186,8 @@ require_once 'db.php';
 /*** KONEC Odstraníme starý obrázek	***/					
 						
 // Aktualizujeme tabulku users							
-						$query6 = mysql_query("UPDATE `users` SET `avatar`='".$avatar."' WHERE `login`='".$login."'");
-						if(!$query6) { echo mysql_error() . " - " . mysql_errno(); }
+						$query6 = mysqli_query($dataconection, "UPDATE `users` SET `avatar`='".$avatar."' WHERE `login`='".$login."'");
+						if(!$query6) { echo mysqli_error($dataconection) . " - " . mysqli_errno($dataconection); }
 						else {
 							echo "<script>alert('Změna proběhla vpořádku.')</script>";
 							header("Refresh: 0; url=uzivatel.php?id=".$_SESSION['id']."");

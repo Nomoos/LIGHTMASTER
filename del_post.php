@@ -11,12 +11,12 @@ if(!empty($_SESSION['login']) AND !empty($_SESSION['heslo']))
 // Dál ověřime, zda jsou tyto údaje platné
 			$login = $_SESSION['login'];
 			$heslo = $_SESSION['heslo'];
-			$over = mysql_query("SELECT `id` FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."'");
+			$over = mysqli_query($dataconection, "SELECT `id` FROM `users` WHERE `login`='".$login."' AND `pass`='".$heslo."'");
 			
 // Pokud najdeme identifikator s tímto loginem a heslem uložime ho do pole $res_over
-			if(mysql_num_rows($over)!=0)
+			if(mysqli_num_rows($over)!=0)
 			{
-				$res_over = mysql_fetch_assoc($over);
+				$res_over = mysqli_fetch_assoc($over);
 				
 // Uložíme identifikator zprávy do proměnné $id				
 				if(isset($_GET['id']) AND $_GET['id']!='')
@@ -24,16 +24,16 @@ if(!empty($_SESSION['login']) AND !empty($_SESSION['heslo']))
 					$id = stripslashes(htmlspecialchars(trim($_GET['id'])));
 					
 // Vybereme z DB příjemce zprávy podle id	
-					$query = mysql_query("SELECT `prijemce` FROM `message` WHERE `id`='".$id."'");
-					if(mysql_num_rows($query)!=0)
+					$query = mysqli_query($dataconection, "SELECT `prijemce` FROM `message` WHERE `id`='".$id."'");
+					if(mysqli_num_rows($query)!=0)
 					{
-						$result = mysql_fetch_assoc($query);
+						$result = mysqli_fetch_assoc($query);
 						
 // Ověříme, zda se jedna o správného příjemce zprávy, protože do GET proměnné v URL můžete zadát libovolný identifikátor, tím pádem odstranit cizí zprávu
 						if($result['prijemce'] == $login)
 						{
 // V případě, že příjemce odpovídá přihlášovacímu jménu, odstraníme zprávu
-							$query1 = mysql_query("DELETE FROM `message` WHERE `id`='".$id."'");
+							$query1 = mysqli_query($dataconection, "DELETE FROM `message` WHERE `id`='".$id."'");
 							if(!$query1)
 							{
 								echo "<script>alert('Zpráva nebyla smazána.')</script>";

@@ -154,16 +154,16 @@ $values = explode(",",$_POST['values']);
 $quary = "";
 
 if($_POST['plan']!=-1){
-mysql_query("DELETE FROM Plans WHERE ID_workload_plan = ".$_POST['plan']." ;");
+mysqli_query($dataconection, "DELETE FROM Plans WHERE ID_workload_plan = ".$_POST['plan']." ;");
 
 $ID_plan=$_POST['plan'];
 }else{
-mysql_query("INSERT INTO  Workload_plan (`ID_COMPANY` ,`PLAN_NAME` ,`x_deleted`)
+mysqli_query($dataconection, "INSERT INTO  Workload_plan (`ID_COMPANY` ,`PLAN_NAME` ,`x_deleted`)
 VALUES (".$_POST['select_company'].",  '".$_POST['plan_name']."',  '0'
 );");
 
-$result = mysql_query("SELECT ID_PLAN FROM  `Workload_plan` ORDER BY ID_PLAN DESC LIMIT 1;");
-$ID_plan = mysql_fetch_array($result);
+$result = mysqli_query($dataconection, "SELECT ID_PLAN FROM  `Workload_plan` ORDER BY ID_PLAN DESC LIMIT 1;");
+$ID_plan = mysqli_fetch_array($result);
 $ID_plan = $ID_plan[0];
 echo 'console.log("'.$ID_plan.'");';
 
@@ -177,7 +177,7 @@ $quary="INSERT INTO Plans (`ID_workload_plan`, `switch_time`, `switch_workload`)
 $quary=$quary." ,(".$ID_plan.",".$values[$ID_position].", ".$workload[$ID_position].")";
 }
 }
-mysql_query($quary);
+mysqli_query($dataconection, $quary);
 
 echo 'console.log("'.$quary.'");';
 
@@ -195,14 +195,14 @@ foreach($_SESSION['company'] as $ID_Company => $name ){
 if(!empty($ID_Company)){
 echo 'list_plans['.$ID_Company.'] = ["'.$name.'"];';
 
-$plans=mysql_query("SELECT ID_PLAN,PLAN_NAME FROM Workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
-while ($plan = mysql_fetch_array($plans, MYSQL_NUM)) {
+$plans=mysqli_query($dataconection, "$dataconection, SELECT ID_PLAN,PLAN_NAME FROM Workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
+while ($plan = mysqli_fetch_array($plans, MYSQLI_NUM)) {
 echo 'list_plans['.$ID_Company.']['.$plan[0].']=["'.$plan[1].'"];';
-$workloads=mysql_query("SELECT switch_time, switch_workload
+$workloads=mysqli_query($dataconection, "SELECT switch_time, switch_workload
 FROM Plans
 WHERE ID_workload_plan =".$plan[0]."
 ORDER BY switch_time;");
-while ($workload = mysql_fetch_array($workloads, MYSQL_NUM)) {
+while ($workload = mysqli_fetch_array($workloads, MYSQLI_NUM)) {
 
 
 echo 'list_plans['.$ID_Company.']['.$plan[0].'].push(['.$workload[0].','.$workload[1].']);';

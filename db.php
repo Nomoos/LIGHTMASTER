@@ -1,13 +1,18 @@
 <?php
 
-$DBSERVER = 'localhost';
-$DBUSER = 'root';
-$DBPASS = 'vertrigo';
+$DBSERVER = 'vpn2.atema.cz';
+$DBUSER = 'lamps.light';
+$DBPASS = 'i0tgJvPMOV';
 
-$DB = 'lamps.lightmaster';
+$DB = 'lamps.lightmaster2';
 
-$link = mysql_connect($DBSERVER,$DBUSER,$DBPASS) or die ('I cannot connect');
-mysql_select_db($DB,$link) or die ('I cannot select DB');
-mysql_query("SET NAMES utf8");
+
+$dataconection = new mysqli($DBSERVER,$DBUSER,$DBPASS, $DB);
+if ($dataconection->connect_errno) {
+    echo "Failed to connect to MySQL: (" . $dataconection->connect_errno . ") " . $dataconection->connect_error;
+}
+//echo $dataconection->host_info . "\n";
+mysqli_query($dataconection, "SET NAMES utf8");
+
 
 ?>
