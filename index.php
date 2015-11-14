@@ -5,17 +5,27 @@ include "variables.php";
 if (isset($_GET['p'])){
 $_SESSION['page']=$_GET['p'];
 header("Location: ".$_SERVER['SERVER_ROOT']."");
+exit;
+}
+
+if (isset($_GET['z'])){
+$_SESSION['zone']=$_GET['z'];
+header("Location: ".$_SERVER['SERVER_ROOT']."");
+exit;
 }
 
 if (isset($_GET['action'])){
 if($_GET['action']=='odhlasit_se'){
-
+  $_SESSION['zone']='';
+  $_SESSION['page']='';
 	$_SESSION['login']='';
 	$_SESSION['heslo']='';
 	$_SESSION['id']='';
 	unset($_SESSION['login']);
 	unset($_SESSION['heslo']);
 	unset($_SESSION['id']);
+  unset($_SESSION['page']);
+	unset($_SESSION['zone']);
 	
 /***************NOVÉ*********************/
 
@@ -141,9 +151,8 @@ echo '<div class="back"><input class="button" type="button" onclick=\'window.loc
 "></div>'; 
 	
 } else {
-
-$_SEASON['page']='map';
-require_once "map.php";     
+$_SESSION['page']=$PAGEAFTERLOGGIN;
+echo "<script>location=".$_SERVER['SERVER_ROOT']."</script>";   
 }
 //když je nastavená stránka
 }else{
@@ -154,7 +163,8 @@ $pages = [
     "stats" => "lamps.php",    
     "plans" => "map.php",
     "users" => "lamps.php",
-    "company" => "lamps.php",
+    "company" => "lamps.php",    
+    "zones" => "zones.php",
     
 ];
 $pageset = 0;
