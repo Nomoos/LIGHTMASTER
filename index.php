@@ -3,13 +3,13 @@ session_start();
 include "variables.php";
 //Celý postup funguje na sessions. Právě v session se ukládají data uživatele, zatímco se nacházi na stránkach. Je důležite spustit sessions na začátku stránky!  
 if (isset($_GET['p'])){
-$_SESSION['page']=$_GET['p'];
+$_SESSION['page'] = $_GET['p'];
 header("Location: ".$_SERVER['SERVER_ROOT']."");
 exit;
 }
 
 if (isset($_GET['z'])){
-$_SESSION['zone']=$_GET['z'];
+$_SESSION['zone'] = $_GET['z'];
 header("Location: ".$_SERVER['SERVER_ROOT']."");
 exit;
 }
@@ -151,32 +151,31 @@ echo '<div class="back"><input class="button" type="button" onclick=\'window.loc
 "></div>'; 
 	
 } else {
-$_SESSION['page']=$PAGEAFTERLOGGIN;
+$_SESSION['page'] = $PAGEAFTERLOGGIN;
 echo "<script>location=".$_SERVER['SERVER_ROOT']."</script>";   
 }
 //když je nastavená stránka
 }else{
-
-$pages = [
+//old php on web lightmaster php 5.4+ use $pages = ["map" => "map.php"]
+$pages = array(
     "map" => "map.php",
     "lamps" => "lamps.php",
     "stats" => "lamps.php",    
     "plans" => "map.php",
     "users" => "lamps.php",
     "company" => "lamps.php",    
-    "zones" => "zones.php",
-    
-];
+    "zones" => "zones.php"  
+);
 $pageset = 0;
 foreach ($pages as $key => $value) {
 
-if($_SESSION['page']==$key){
+if($_SESSION['page'] == $key){
     echo $key;
     require_once $value;
     $pageset = 1;
 }
 }
-if(0==$pageset){
+if(0 == $pageset){
   //unset($_SESSION['page']);
   echo "<script>console.log('Stránka ".$_SESSION['page']." neexistuje')</script>";
   
