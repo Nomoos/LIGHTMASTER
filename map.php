@@ -101,7 +101,7 @@ If(!empty($_POST['lamp_status'])){
 If($_POST['lamp_status']=='-1'){
 $_POST['lamp_status']=0;
 }
-echo "console.log('Přepinam do stavu".$_POST['lamp_status']."');";
+echo "console.log('Přepinam lampu ".$_POST['lamp_id']." do stavu ".$_POST['lamp_status']."');";
 mysqli_query($dataconection, "UPDATE lamp SET is_enabled =".$_POST['lamp_status']." WHERE id = ".$_POST['lamp_id'].";");
 }else{
 echo "console.log('Status lampy nedostupny');";
@@ -127,7 +127,7 @@ echo 'console.log("'.$row[0].'");';
       
 If($_POST['lamp_id']=="new"){
 
-echo 'console.log("tady");';
+echo 'console.log("New lamp");';
 If($_POST['plan']=='-1'){
 mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`, `set_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_POST['workload'].");");
 }else{
@@ -137,8 +137,9 @@ $result=mysqli_query($dataconection, "SELECT id FROM  `lamp` ORDER BY id DESC LI
 $row = mysqli_fetch_array($result);
 $_POST['lamp_id']=$row[0];
 }else{
+echo 'console.log("Old lamp");';
 If($_POST['plan']=='-1'){
-mysqli_query($dataconection, "UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
+mysqli_query($dataconection, "UPDATE  `lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
 `long` =  ".$_POST['lat'].",
 `lat` =  ".$_POST['lng'].",
 `ID_control` =  ".$_POST['control'].",
@@ -146,7 +147,7 @@ mysqli_query($dataconection, "UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enable
 `ID_workload` =  ".$_POST['plan']."
  WHERE id = ".$_POST['lamp_id'].";");
  }else{
-  mysqli_query($dataconection, "UPDATE  `lamps.lightmaster`.`lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
+  mysqli_query($dataconection, "UPDATE  `lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
 `long` =  ".$_POST['lat'].",
 `lat` =  ".$_POST['lng'].",
 `ID_control` =  ".$_POST['control'].",
