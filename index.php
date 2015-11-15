@@ -151,11 +151,13 @@ echo '<div class="back"><input class="button" type="button" onclick=\'window.loc
 "></div>'; 
 	
 } else {
+require_once 'pristup.php';
 $_SESSION['page'] = $PAGEAFTERLOGGIN;
 echo "<script>location=".$_SERVER['SERVER_ROOT']."</script>";   
 }
 //když je nastavená stránka
 }else{
+require_once 'pristup.php';
 //old php on web lightmaster php 5.4+ use $pages = ["map" => "map.php"]
 $pages = array(
     "map" => "map.php",
