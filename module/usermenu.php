@@ -2,7 +2,7 @@
 if($_SESSION['id']){
 $result = mysqli_query($dataconection, "SELECT * 
 FROM  `users` 
-LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.ID_user
+LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.users_ID
 WHERE users.id=".$_SESSION['id'].";");
 
 
@@ -15,8 +15,8 @@ $result = mysqli_query($dataconection, "SELECT ID_company, Company_name
 FROM  `Company` ");
 }else{
 $result = mysqli_query($dataconection, "SELECT Company.ID_company AS ID_company,Company.Company_name AS Company_name FROM `users`
-LEFT OUTER JOIN License_managment AS Managment ON users.id = Managment.ID_user
-LEFT OUTER JOIN Company ON Company.ID_company = Managment.ID_company
+LEFT OUTER JOIN License_managment AS Managment ON users.id = Managment.users_ID
+LEFT OUTER JOIN Company ON Company.ID_company = Managment.company_ID_company
 WHERE users.id=".$_SESSION['id']."; 
 ");
 }

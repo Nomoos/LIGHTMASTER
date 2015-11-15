@@ -4,8 +4,6 @@ require_once 'db.php';
 require_once 'pristup.php';
 require_once 'variables.php' ; 
 
-//Vložíme soubor s připojením k databázi. ( musí se nacházet ve stejné složce )		
-
 
 if(isset($_POST['submit']))
 {
@@ -51,9 +49,13 @@ $rules=array();
       }
     }
     
-  $sql = "UPDATE `Rule_access`SET ".$temp."\n"
-    . "WHERE ID_user= '".$account."'";
-    mysqli_query($dataconection, $sql); 
+  $sql = "UPDATE `rule_access` SET ".$temp."\n"
+    . "WHERE users_ID= '".$account."';";
+    echo $sql;
+    echo "<br>";
+    mysqli_query($dataconection, $sql);    
+    echo mysqli_affected_rows ( $dataconection );
+    echo "<br>"; 
     #echo $sql;   
     #echo "<br>".$account." - ".$temp."<br>";
   
@@ -135,11 +137,11 @@ require_once 'module/menu.php';
 echo '</div>';
 $result = mysqli_query($dataconection, "SELECT * 
 FROM  `users` 
-LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.ID_user");
+LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.users_ID");
 echo '<div class="content_container">';
 echo "<div class='trans_table'>";
 echo "<table class='rule_table'><tr class='frist_table_row row'><td class='frist_cell head_row'>Jméno</td><td class='head_row'>Email</td>";
-//echo"<td>Company</td>";
+echo"<td>Company</td>";
 echo"<td class='head_row'>Super admin</td><td class='head_row'>View lamp</td><td class='head_row'>Edit lamp</td><td class='head_row'>Edit rule</td></tr>";
 
 echo "<form action=\"\" method=\"POST\">";
@@ -152,7 +154,7 @@ extract($row);
 echo "<tr class='table_row_".$even." row'>";
 echo "<td class='frist_cell ".$even." cell'>".$name."</td>";
 echo "<td class='".$even." cell'>".$email."</td>";
-//echo "<td>".$ID_company."</td>";
+echo "<td>".$company_ID_company."</td>";
 
 If($Super_admin==1)
 {
