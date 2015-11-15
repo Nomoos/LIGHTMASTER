@@ -176,8 +176,10 @@ if($_SESSION['page'] == $key){
 }
 }
 if(0 == $pageset){
-  //unset($_SESSION['page']);
-  echo "<script>console.log('Stránka ".$_SESSION['page']." neexistuje')</script>";
+  $_SESSION['page'] = '';
+  unset($_SESSION['page']);
+  http_response_code(404);
+   require_once $NOTFOUNDPAGE;
   
 } 
 
