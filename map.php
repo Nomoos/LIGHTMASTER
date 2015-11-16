@@ -10,7 +10,6 @@
 
 <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
 <script src="lib/js/jquery.js"></script>
-<script src="module/myscript.js"></script>
 <!-- styly -->
 <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
 <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
@@ -45,13 +44,17 @@
 <?php
   require_once 'module/usermenu.php';
   require_once 'module/menu.php';
+  require_once 'zones.php';
 ?>
 </div>
 <div id="snippet--flashes"></div>
 
 <div id="content_container" class="content_container">
-<div id="map" class="map_container"></div>
-
+<?php
+if(isset($_SESSION['zone'])){
+echo '<div id="map" class="map_container"></div>';
+}
+ ?>
 
 
 <div class="form_container">
@@ -75,12 +78,6 @@
 <?php
 If(!empty($_POST)){
 
-//spolecnost
-If(!empty($_POST['select_company'])){
-echo 'document.getElementById("company").value='.$_POST['select_company'].';';
-}else{
-echo 'console.log("Je POST není vybraná společnost.");';
-}
 //zoom
 If(!empty($_POST['zoom'])){
 echo 'var map = L.map(\'map\').setView(['.$_POST['lat_default'].', '.$_POST['lng_default'].'], '.$_POST['zoom'].');';
@@ -117,7 +114,7 @@ If($_POST['status']=="create"){
   }
 //if new controler  
   If($_POST['control']=="new"){
-   mysqli_query($dataconection, "INSERT INTO control_gateway (ID_company, Name_control) VALUES ('".$_POST['select_company']."', '".$_POST['control_name']."');");
+   mysqli_query($dataconection, "INSERT INTO control_gateway (ID_company, Name_control) VALUES ('".$_SESSION['company']."', '".$_POST['control_name']."');");
    $result=mysqli_query($dataconection, "SELECT ID_control FROM control_gateway ORDER BY ID_control DESC 
 LIMIT 0 , 1 ");
 $row = mysqli_fetch_array($result);
@@ -318,7 +315,7 @@ var groups = {};
 // add a marker in the given location, attach some popup content to it and open the popup
 <?php
 
-foreach($_SESSION['company'] as $ID_Company => $name ){
+foreach($_SESSION['company_list'] as $ID_Company => $name ){
 if(!empty($ID_Company)){
 echo 'lamps["'.$ID_Company.'"]=[];';
 echo 'company_list["'.$ID_Company.'"]=[];';

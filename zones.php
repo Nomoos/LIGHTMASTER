@@ -1,3 +1,4 @@
+
 <?php
 
 
@@ -33,8 +34,8 @@ $zonelevel = $zonelevel-1;
 echo "<ul>";
 $zones=mysqli_query($dataconection, "SELECT * FROM area WHERE area_ID_area =".$zoneid);
 while($zone = mysqli_fetch_array($zones)) {
-echo '<li><a class="link area" href="?z='.$zone['ID_area'].'">'.$zone['Area_name'].'</a></li>';
+echo '<li><a class="link area" href="?z='.$zone['ID_area'].'">'.$zone['Area_name'].'</a> <a class="link area" href="?z='.$zone['ID_area'].'&action=1">vstoupit</a> <!--<a class="link area" href="?z='.$zone['ID_area'].'&action=2">--> editovat(neaktivni) <!--</a>--><!--<a class="link area" href="?z='.$zone['ID_area'].'&action=2">--> odstranit(neaktivni) <!--</a>--></li>';
 }
-echo "</ul><br></div>" ;
+echo '<!-- <a class="link area" href="?z=new&action=3"> -->pridat(neaktivni)<!--</a>--></ul><br></div>' ;
 
 ?>

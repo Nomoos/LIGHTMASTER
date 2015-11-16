@@ -50,7 +50,7 @@ $rules=array();
     }
     
   $sql = "UPDATE `rule_access` SET ".$temp."\n"
-    . "WHERE users_ID= '".$account."';";
+    . "WHERE users_ID= '".$account."' and ";
     echo $sql;
     echo "<br>";
     mysqli_query($dataconection, $sql);    

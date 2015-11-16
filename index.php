@@ -5,14 +5,27 @@ include "variables.php";
 if (isset($_GET['p'])){
 $_SESSION['page'] = $_GET['p'];
 header("Location: ".$_SERVER['SERVER_ROOT']."");
-exit;
+die();
+}
+
+if (isset($_GET['c'])){
+$_SESSION['company'] = $_GET['c'];
+header("Location: ".$_SERVER['SERVER_ROOT']."");
+$_SESSION['page'] = 'map';
+die();
 }
 
 if (isset($_GET['z'])){
 $_SESSION['zone'] = $_GET['z'];
 header("Location: ".$_SERVER['SERVER_ROOT']."");
-exit;
+if (isset($_GET['action'])){
+if ($_GET['action']==1){
+$_SESSION['page'] = 'map';
 }
+}
+die();
+}
+
 
 if (isset($_GET['action'])){
 if($_GET['action']=='odhlasit_se'){
@@ -21,11 +34,13 @@ if($_GET['action']=='odhlasit_se'){
 	$_SESSION['login']='';
 	$_SESSION['heslo']='';
 	$_SESSION['id']='';
+  $_SESSION['company']='';
 	unset($_SESSION['login']);
 	unset($_SESSION['heslo']);
 	unset($_SESSION['id']);
   unset($_SESSION['page']);
 	unset($_SESSION['zone']);
+	unset($_SESSION['company']);
 	
 /***************NOVÉ*********************/
 
@@ -165,8 +180,8 @@ $pages = array(
     "stats" => "lamps.php",    
     "plans" => "map.php",
     "users" => "lamps.php",
-    "company" => "lamps.php",    
-    "zones" => "zones.php"  
+    "company" => "company.php",    
+    "zones" => "zones.php",  
 );
 $pageset = 0;
 foreach ($pages as $key => $value) {

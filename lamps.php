@@ -198,8 +198,8 @@ document.documentElement.className+=' js';
 If(!empty($_POST)){
 
 //spolecnost
-If(!empty($_POST['select_company'])){
-echo 'document.getElementById("company").value='.$_POST['select_company'].';';
+If(!empty($_SESSION['company'])){
+echo 'document.getElementById("company").value='.$_SESSION['company'].';';
 }else{
 echo 'console.log("Je POST není vybraná společnost.");';
 }
@@ -215,7 +215,7 @@ echo 'select_company=document.getElementById("company").value;';
 
 <?php
 echo '<script>var table_list=[];';
-foreach($_SESSION['company'] as $ID_Company => $name ){
+foreach($_SESSION['company_list'] as $ID_Company => $name ){
 if(!empty($ID_Company)){
 echo "table_list[".$ID_Company."] = '<div class=\"table_list\"><table class=\"lamp_table\">";
 
