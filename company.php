@@ -38,18 +38,19 @@ WHERE users.id=".$_SESSION['id'].";
 }
 
 echo '<center><div class="companies">';
-if(is_null($result)){
+$DEMO=True;
 while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-
+if(isset($row['ID_company'])){
 if($row['ID_company']!=$DEMOCOMPANYID){
 echo '<a class="link plans" href="?c='.$row['ID_company'].'">'.$row['Company_name'].'</a>';
 echo "<br>";
+$DEMO=False;
 }
 }
-}else{
+}
+if($DEMO){
 echo 'Nemáte oprávnění k žádné společnosti, ale můžete se podívat na:<br>';
 echo '<a class="link plans" href="?c='.$DEMOCOMPANYID.'">Demo</a>';
-
 }
 echo "<br></div></center>";
 }else{

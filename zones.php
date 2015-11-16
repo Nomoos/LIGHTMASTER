@@ -10,7 +10,7 @@ $zoneid = $DEFAULTAREAID ;
 }
 echo '<div class="areas">';
 $parentzoneid = $zoneid;
-$parents = [];
+$parents = array();
 $zonelevel = 1;
 while ($parentzoneid){
     $parentzone=mysqli_query($dataconection, "SELECT * FROM area WHERE ID_area =".$parentzoneid);

@@ -38,16 +38,21 @@ Společnost:<?php
 echo '<select id="company" class="nav_select item" name="company" onchange="switch_company();">';
 
 $_SESSION['company_list']=array();
-if(is_null($result)){
-While( $row = mysqli_fetch_array($result) )
-{
-extract($row);
 
+
+$DEMO=True;
+while( $row = mysqli_fetch_array($result)){
+      if(isset($row['ID_company'])){
+      if($row['ID_company']!=$DEMOCOMPANYID or $Super_admin==1){
+      extract($row);
       $_SESSION['company_list'][$ID_company]=$Company_name;            
       echo '<option value="'.$ID_company.'">'.$Company_name.'</option>';
-
+      }
+$DEMO=False;
 }
-}else{
+}
+
+if($DEMO){
  $_SESSION['company_list'][1]="Demo";            
       echo '<option value="'.$DEMOCOMPANYID.'">Demo</option>';
 }

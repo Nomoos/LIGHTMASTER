@@ -17,15 +17,16 @@ require_once 'pristup.php';
 
 
 echo 'var list_logs=[];';
-foreach($_SESSION['company'] as $ID_Company => $name ){
+
+$ID_Company = $_SESSION['company'];
 if(!empty($ID_Company)){
 echo 'list_logs['.$ID_Company.'] = [];';
 
 
-$result = mysqli_query($dataconection, "SELECT lamp.id FROM `Company`
-LEFT OUTER JOIN Control_gateway AS Gate ON Gate.ID_company = Company.ID_company
-LEFT OUTER JOIN lamp ON lamp.ID_control = Gate.ID_control
-WHERE Company.ID_company='".$ID_Company."' AND lamp.x_deleted = '0';");
+$result = mysqli_query($dataconection, "SELECT lamp.id FROM `company`
+LEFT OUTER JOIN control_gateway ON control_gateway.ID_company = company.ID_company
+LEFT OUTER JOIN lamp ON lamp.ID_control = control_gateway.ID_control
+WHERE company.ID_company='".$ID_Company."' AND lamp.x_deleted = '0';");
 if (!$result) {
     die('Invalid query: ' . mysqli_error($dataconectios));
 }
@@ -43,7 +44,7 @@ echo 'list_logs['.$ID_Company.']['.$log[0].'].push(['.$log[1].','.$log[2].']);';
 }
 }
 }
-}    
+    
 ?>
 var list_data=[];
 var selected_lamp;

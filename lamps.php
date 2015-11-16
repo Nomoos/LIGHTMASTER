@@ -7,7 +7,7 @@ require_once 'pristup.php';
 	<meta charset="utf-8">
 	<meta name="description" content="">
 
-	<title>Map</title>
+	<title>Lamps</title>
 <!-- js knihovny -->
 <script src="lib/leaflet/leaflet.js"></script>
 <script src="lib/js/jquery.js"></script>
@@ -215,7 +215,7 @@ echo 'select_company=document.getElementById("company").value;';
 
 <?php
 echo '<script>var table_list=[];';
-foreach($_SESSION['company_list'] as $ID_Company => $name ){
+$ID_Company = $_SESSION['company'];
 if(!empty($ID_Company)){
 echo "table_list[".$ID_Company."] = '<div class=\"table_list\"><table class=\"lamp_table\">";
 
@@ -232,11 +232,11 @@ echo "<caption class=\"caption\">Kontrolní bod ".$company[1]."</caption>";
 $even=0;
 echo '<tr class="frist_table_row row"><th class="frist_cell head_row cell">ID</th><th class="head_row cell">Šířka</th><th class="head_row cell">Délka</th><th class="head_row cell">Zapnutá</th><th class="even cell">Aktuální vytížení</td><th class="even cell">Nastavené vytížení</td><td class="even cell">Nastavený plán</td></tr>';
 
-$result = mysqli_query($dataconection, "SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,lamp.actual_workload,lamp.set_workload,Workload_plan.PLAN_NAME FROM `Company`
-LEFT OUTER JOIN Control_gateway AS Gate ON Gate.ID_company = Company.ID_company
-LEFT OUTER JOIN lamp ON lamp.ID_control = Gate.ID_control
-LEFT OUTER JOIN Workload_plan ON Workload_plan.ID_PLAN = lamp.ID_workload
-WHERE Gate.ID_control='".$company[0]."' AND lamp.x_deleted = '0';");
+$result = mysqli_query($dataconection, "SELECT lamp.lat,lamp.long,lamp.id,control_gateway.Name_control,lamp.is_enabled,lamp.actual_workload,lamp.set_workload,workload_plan.PLAN_NAME FROM `company`
+LEFT OUTER JOIN control_gateway ON control_gateway.ID_company = company.ID_company
+LEFT OUTER JOIN lamp ON lamp.ID_control = control_gateway.ID_control
+LEFT OUTER JOIN workload_plan ON workload_plan.ID_PLAN = lamp.ID_workload
+WHERE control_gateway.ID_control='".$company[0]."' AND lamp.x_deleted = '0';");
 if (!$result) {
     die('Invalid query: ' . mysqli_error($dataconection));
 }
@@ -258,7 +258,6 @@ $even =1;
 }
 echo "</table>';";
 echo "table_list[".$ID_Company."] = table_list[".$ID_Company."]+'</div>';";
-}
 }
 ?>
 document.getElementById("table").innerHTML=table_list[select_company];

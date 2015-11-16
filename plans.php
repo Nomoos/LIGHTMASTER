@@ -191,11 +191,12 @@ echo 'console.log("POST není k dispozici.");';
 echo 'select_company=document.getElementById("company").value;';
 
 echo 'var list_plans=[];';
-foreach($_SESSION['company'] as $ID_Company => $name ){
+
+$ID_Company = $_SESSION['company'];
 if(!empty($ID_Company)){
 echo 'list_plans['.$ID_Company.'] = ["'.$name.'"];';
 
-$plans=mysqli_query($dataconection, "$dataconection, SELECT ID_PLAN,PLAN_NAME FROM Workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
+$plans=mysqli_query($dataconection, "SELECT ID_PLAN,PLAN_NAME FROM workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
 while ($plan = mysqli_fetch_array($plans, MYSQLI_NUM)) {
 echo 'list_plans['.$ID_Company.']['.$plan[0].']=["'.$plan[1].'"];';
 $workloads=mysqli_query($dataconection, "SELECT switch_time, switch_workload
@@ -210,7 +211,7 @@ echo 'list_plans['.$ID_Company.']['.$plan[0].'].push(['.$workload[0].','.$worklo
 }
 }
 }
-}
+
 ?>
 </script>
 

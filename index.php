@@ -177,9 +177,9 @@ require_once 'pristup.php';
 $pages = array(
     "map" => "map.php",
     "lamps" => "lamps.php",
-    "stats" => "lamps.php",    
-    "plans" => "map.php",
-    "users" => "lamps.php",
+    "stats" => "stats.php",    
+    "plans" => "plans.php",
+    "users" => "users.php",
     "company" => "company.php",    
     "zones" => "zones.php",  
 );
@@ -187,7 +187,7 @@ $pageset = 0;
 foreach ($pages as $key => $value) {
 
 if($_SESSION['page'] == $key){
-    echo $key;
+    //echo $key;
     require_once $value;
     $pageset = 1;
 }
