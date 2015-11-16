@@ -25,7 +25,7 @@ margin-right: auto;
 <div class="container">
 
 <h1>Registrace<br>nového uživatele</h1>
-<form action="pridavani.php" method="POST" enctype="multipart/form-data">
+<form action="adduser.php" method="POST" enctype="multipart/form-data">
 <!--  pridavani.php je skript pro přidávaní nových uživatelů do databáze, tzn. po klíknutí na tlačítko Ok se data pošlou do tohoto souboru metodou $_POST  -->
 	
 	<div><label for="name">Jméno:</label></div>   

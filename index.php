@@ -20,8 +20,14 @@ $_SESSION['zone'] = $_GET['z'];
 header("Location: ".$_SERVER['SERVER_ROOT']."");
 if (isset($_GET['action'])){
 if ($_GET['action']==1){
+$_SESSION['zoneaction'] = 'show';
 $_SESSION['page'] = 'map';
+}else{
+$_SESSION['zoneaction'] = 'other';
 }
+}else{
+$_SESSION['zoneaction'] = '';
+unset($_SESSION['zoneaction']);
 }
 die();
 }
@@ -34,7 +40,9 @@ if($_GET['action']=='odhlasit_se'){
 	$_SESSION['login']='';
 	$_SESSION['heslo']='';
 	$_SESSION['id']='';
-  $_SESSION['company']='';
+  $_SESSION['company']='';  
+  $_SESSION['zoneaction'] = '';
+  unset($_SESSION['zoneaction']);
 	unset($_SESSION['login']);
 	unset($_SESSION['heslo']);
 	unset($_SESSION['id']);
