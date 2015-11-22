@@ -1,7 +1,7 @@
 <?php
-        //<div class="space50">
-        //</div>
-  echo '
+//<div class="space50">
+//</div>
+echo '
   <div class="menu">
     <a class="link maps" href="?p=map">Mapa</a> 
     <a class="link lamps" href="?p=lamps">Lampy</a> 

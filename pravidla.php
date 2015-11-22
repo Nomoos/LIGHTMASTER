@@ -1,67 +1,84 @@
 <?php
-session_start(); 
-require_once 'db.php';
-require_once 'pristup.php';
-require_once 'variables.php' ; 
-
-
-if(isset($_POST['submit']))
+function slugify($text)
 {
-$rules=array();
-  foreach($_POST as $kluc => $hodnota)
-  {
-   $retezec=explode("*",$kluc);
-    
-    if(count($retezec)==2){
-    if(isset($rules[$retezec[0]])==0){
-     $rules[$retezec[0]]=array();
-    }
-    $rules[$retezec[0]][$retezec[1]] = "1";
-    
-    }
-  }
-    //print_r($rules);
-  foreach($rules as $account => $info)
-  {
-    foreach(Array("Super_admin","View_lamp","Edit_lamp","Edit_rule") as $key)
+    // replace non letter or digits by -
+    $text = preg_replace('~[^\\pL\d]+~u', '-', $text);
+
+    // trim
+    $text = trim($text, '-');
+
+    // transliterate
+    $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+    // lowercase
+    $text = strtolower($text);
+
+    // remove unwanted characters
+    $text = preg_replace('~[^-\w]+~', '', $text);
+
+    if (empty($text))
     {
-    if (array_key_exists($key,$info))
-    {
-    }else
-    {
-    $info[$key]=0;
+        return 'n-a';
     }
-    }
-  
-  
-  
-  
-    $first=True; 
-    foreach($info as $name => $rule)
-    {
-      if($first)
-      {
-       $temp = $name."=".$rule;
-       $first=False;
-      }else
-      {
-      $temp = $temp.",".$name."=".$rule;
-      }
-    }
-    
-  $sql = "UPDATE `rule_access` SET ".$temp."\n"
-    . "WHERE users_ID= '".$account."' and ";
-    echo $sql;
+
+    return $text;
+}
+
+if (isset($_POST['rename'])) {
     echo "<br>";
-    mysqli_query($dataconection, $sql);    
-    echo mysqli_affected_rows ( $dataconection );
-    echo "<br>"; 
-    #echo $sql;   
-    #echo "<br>".$account." - ".$temp."<br>";
-  
-  }
-} 
- /* cyklus prebehne cele pole, v premennej $kluc bude nazov kluca, v premennej
+    echo $_POST['name'];
+    echo "<br>";
+    echo slugify($_POST['name']);
+    $sql = "UPDATE company SET `company_name`='".slugify($_POST['name'])."', `company_display_name`='".$_POST['name']."' WHERE `ID_company`='" . $_SESSION['company'] . "';";
+    mysqli_query($dataconection, $sql);
+    echo mysqli_affected_rows($dataconection);
+    echo "<br>";
+}
+if (isset($_POST['changerule'])) {
+    $rules = array();
+    foreach ($_POST as $kluc => $hodnota) {
+        $retezec = explode("*", $kluc);
+
+        if (count($retezec) == 2) {
+            if (isset($rules[$retezec[0]]) == 0) {
+                $rules[$retezec[0]] = array();
+            }
+            $rules[$retezec[0]][$retezec[1]] = "1";
+
+        }
+    }
+    //print_r($rules);
+    foreach ($rules as $account => $info) {
+        foreach (Array("Super_admin", "View_lamp", "Edit_lamp", "Edit_rule") as $key) {
+            if (array_key_exists($key, $info)) {
+            } else {
+                $info[$key] = 0;
+            }
+        }
+
+
+        $first = True;
+        foreach ($info as $name => $rule) {
+            if ($first) {
+                $temp = $name . "=" . $rule;
+                $first = False;
+            } else {
+                $temp = $temp . "," . $name . "=" . $rule;
+            }
+        }
+
+        $sql = "UPDATE `rule_access` SET " . $temp . "\n"
+            . "WHERE users_ID= '" . $account . "' and ";
+        echo $sql;
+        echo "<br>";
+        mysqli_query($dataconection, $sql);
+        echo mysqli_affected_rows($dataconection);
+        echo "<br>";
+
+    }
+}
+
+/* cyklus prebehne cele pole, v premennej $kluc bude nazov kluca, v premennej
 $hodnota bude hodnota prvku pola prisluchajuca aktualnemu klucu */
 
 
@@ -70,13 +87,13 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	
-  <title>'.$result['login'].'</title>
+
+  <title>Company rules</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" >
-  
+
   <link rel="stylesheet" href="css/css/kraken.css" />
 <link rel="stylesheet" href="css/map.css" />
-<link rel="shortcut icon" href="img/sviti.png" />	
+<link rel="shortcut icon" href="img/sviti.png" />
 <style>
 .content_container{
 background:rgb(218, 160, 85);
@@ -123,7 +140,7 @@ margin-left: 45%;
 .buttons:hover{
 background:rgb(201, 159, 106);
 }
-</style>    
+</style>
 </head>
 <body>
 <div class="container">
@@ -137,73 +154,66 @@ require_once 'module/menu.php';
 echo '</div>';
 $result = mysqli_query($dataconection, "SELECT * 
 FROM  `users` 
-LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.users_ID");
+LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.users_ID
+WHERE Rule.company_ID_company = ".$_SESSION['company']);
 echo '<div class="content_container">';
 echo "<div class='trans_table'>";
 echo "<table class='rule_table'><tr class='frist_table_row row'><td class='frist_cell head_row'>Jméno</td><td class='head_row'>Email</td>";
-echo"<td>Company</td>";
-echo"<td class='head_row'>Super admin</td><td class='head_row'>View lamp</td><td class='head_row'>Edit lamp</td><td class='head_row'>Edit rule</td></tr>";
+echo "<td>Company</td>";
+echo "<td class='head_row'>Super admin</td><td class='head_row'>View lamp</td><td class='head_row'>Edit lamp</td><td class='head_row'>Edit rule</td></tr>";
 
 echo "<form action=\"\" method=\"POST\">";
+echo $inputcompanyname;
 $even = 'odd';
-While( $row = mysqli_fetch_array($result) )
-{
-extract($row);
+While ($row = mysqli_fetch_array($result)) {
+    extract($row);
 
 
-echo "<tr class='table_row_".$even." row'>";
-echo "<td class='frist_cell ".$even." cell'>".$name."</td>";
-echo "<td class='".$even." cell'>".$email."</td>";
-echo "<td>".$company_ID_company."</td>";
+    echo "<tr class='table_row_" . $even . " row'>";
+    echo "<td class='frist_cell " . $even . " cell'>" . $name . "</td>";
+    echo "<td class='" . $even . " cell'>" . $email . "</td>";
+    echo "<td>" . $company_ID_company . "</td>";
 
-If($Super_admin==1)
-{
-echo "<td class='".$even." cell'><input name=\"".$id."*Super_admin"."\" value=\"1\" type=\"checkbox\" checked ></td>";
-}else
-{
-echo "<td class='".$even." cell'><input name=\"".$id."*Super_admin"."\" value=\"1\" type=\"checkbox\"></td>";
-}
-If($View_lamp==1)
-{
-echo "<td class='".$even." cell'><input name=\"".$id."*View_lamp"."\" value=\"1\" type=\"checkbox\" checked ></td>";
-}else
-{
-echo "<td class='".$even." cell'><input name=\"".$id."*View_lamp"."\" value=\"1\" type=\"checkbox\"></td>";
-}
-If($Edit_lamp==1)
-{
-echo "<td class='".$even." cell'><input name=\"".$id."*Edit_lamp"."\" value=\"1\" type=\"checkbox\" checked ></td>";
-}else
-{
-echo "<td class='".$even." cell'><input name=\"".$id."*Edit_lamp"."\" value=\"1\" type=\"checkbox\"></td>";
-}
-If($Edit_rule==1)
-{
-echo "<td class='".$even." cell'><input name=\"".$id."*Edit_rule"."\" value=\"1\" type=\"checkbox\" checked ></td>";
-}else
-{
-echo "<td class='".$even." cell'><input name=\"".$id."*Edit_rule"."\" value=\"1\" type=\"checkbox\"></td>";
-}
-echo "";
-echo "</tr>";
-if($even=='odd'){
-$even = 'even';
-}else{
-if($even=='even'){
-$even='odd';
-}
-}
+    If ($Super_admin == 1) {
+        echo "<td class='" . $even . " cell'><input name=\"" . $id . "*Super_admin" . "\" value=\"1\" type=\"checkbox\" checked ></td>";
+    } else {
+        echo "<td class='" . $even . " cell'><input name=\"" . $id . "*Super_admin" . "\" value=\"1\" type=\"checkbox\"></td>";
+    }
+    If ($View_lamp == 1) {
+        echo "<td class='" . $even . " cell'><input name=\"" . $id . "*View_lamp" . "\" value=\"1\" type=\"checkbox\" checked ></td>";
+    } else {
+        echo "<td class='" . $even . " cell'><input name=\"" . $id . "*View_lamp" . "\" value=\"1\" type=\"checkbox\"></td>";
+    }
+    If ($Edit_lamp == 1) {
+        echo "<td class='" . $even . " cell'><input name=\"" . $id . "*Edit_lamp" . "\" value=\"1\" type=\"checkbox\" checked ></td>";
+    } else {
+        echo "<td class='" . $even . " cell'><input name=\"" . $id . "*Edit_lamp" . "\" value=\"1\" type=\"checkbox\"></td>";
+    }
+    If ($Edit_rule == 1) {
+        echo "<td class='" . $even . " cell'><input name=\"" . $id . "*Edit_rule" . "\" value=\"1\" type=\"checkbox\" checked ></td>";
+    } else {
+        echo "<td class='" . $even . " cell'><input name=\"" . $id . "*Edit_rule" . "\" value=\"1\" type=\"checkbox\"></td>";
+    }
+    echo "";
+    echo "</tr>";
+    if ($even == 'odd') {
+        $even = 'even';
+    } else {
+        if ($even == 'even') {
+            $even = 'odd';
+        }
+    }
 }
 echo "</table>";
-echo "<input class='buttons' type=\"submit\" name=\"submit\" value=\"Odeslat\">";
+echo "<input class='buttons' type=\"submit\" name=\"changerule\" value=\"Odeslat\">";
 echo "</form>";
 echo "</div></body></html>";
 ?>
 <script>
-function unselect_all(){
+    function unselect_all() {
 
-}
-function draw_map(){
+    }
+    function draw_map() {
 
-}
+    }
 </script>
