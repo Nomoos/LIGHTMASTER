@@ -173,7 +173,7 @@ While ($row = mysqli_fetch_array($result)) {
     }
 }
 echo "</table>";
-echo "<input class='buttons' type=\"submit\" name=\"changerule\" value=\"Odeslat\">";
+echo "<input class='buttons' type=\"submit\" name=\"changerule\" value=\"Změnit oprávnění\">";
 echo "</form>";
 echo "</div></body></html>";
 ?>
