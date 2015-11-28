@@ -1,5 +1,5 @@
 <?php
-$_SERVER['SERVER_ROOT'] = '/www2/';
+$_SERVER['SERVER_ROOT'] = '/LIGHTMASTER/';
 $DEFAULTAREAID = 1;
 $PAGEAFTERLOGGIN = 'company';
 $NOTFOUNDPAGE = '404.php';
