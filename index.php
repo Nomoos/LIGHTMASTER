@@ -126,6 +126,18 @@ echo '
     .login {
         margin-bottom: 5px
     }
+    
+    .headcontainer{
+        margin-left: auto;
+    margin-right: auto;
+    width: 800px;
+    }
+    .flag {
+    width: 30px;
+}
+.flags{
+float: right;
+}
 
 </style>
 
@@ -137,8 +149,10 @@ echo '
 //Ověřujeme, zda byla vybrána nějaka data z databáze ( avatar ). Jestli ne v COOKIE jsou špatné heslo nebo login.
 if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '') {
     echo '
+    <div class="headcontainer">
+    <img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><div class="flags"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></div>
+    </div>
 <div class="container">
-<div><img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></div>
 <h1>Přihlásit se</h1>
 <form action="overeni.php" method="POST">
 <!--  overeni.php je skript pro ověření zadaných dat, tzn. po klíknutí na tlačítko Ok se data pošlou do tohoto souboru metodou POST  -->
