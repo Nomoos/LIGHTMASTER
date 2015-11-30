@@ -8,10 +8,10 @@ Firma logo učet
 
 Areas
 -seznam
--přidat 
+-přidat
 -upravit
 -smazat
- -Mazat pouze prázdnou.Bez lamp.
+-Mazat pouze prázdnou.Bez lamp.
 
 </body>
 </html>
