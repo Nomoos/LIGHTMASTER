@@ -63,7 +63,7 @@ WHERE users.id=" . $_SESSION['id'] . ";
     echo '
 
 <div class="first item">
-<a class="link" href="pravidla.php">Přistupová pravidla</a> 
+<a class="link" href="?p=copanyprofile">Přistupová pravidla</a>
 </div>
 <div class="last item">
 <a class="link" href="index.php?action=odhlasit_se">Odhlásit se</a>

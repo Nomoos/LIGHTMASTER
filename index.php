@@ -130,7 +130,7 @@ echo '
     .headcontainer{
         margin-left: auto;
     margin-right: auto;
-    width: 800px;
+    width: 550px;
     }
     .flag {
     width: 30px;
@@ -138,6 +138,16 @@ echo '
 .flags{
 float: right;
 }
+    .description{
+      margin-left: 50px;
+    }
+    .loginfail{
+        color:red;
+        font-weight: bold;
+    }
+    .projectname{
+        font-weight: bold ;
+    }
 
 </style>
 
@@ -150,9 +160,21 @@ float: right;
 if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '') {
     echo '
     <div class="headcontainer">
-    <img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><div class="flags"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></div>
+    <img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><div class="flags"><div class="projectname">Projekt: ME1 – C2M</div><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></div>
+    <div class="description">Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1.</div>
     </div>
-<div class="container">
+<div class="container">';
+    if(isset($_SESSION['loginfail'])) {
+        echo '<div class="loginfail">Chybné uživatelské jméno nebo heslo.</div>';
+        unset($_SESSION['loginfail']);
+    }
+
+    if(isset($_SESSION['registrationfail'])) {
+        echo '<div class="loginfail">'.$_SESSION['registrationfail'].'</div>';
+        unset($_SESSION['registrationfail']);
+    }
+
+    echo '
 <h1>Přihlásit se</h1>
 <form action="overeni.php" method="POST">
 <!--  overeni.php je skript pro ověření zadaných dat, tzn. po klíknutí na tlačítko Ok se data pošlou do tohoto souboru metodou POST  -->

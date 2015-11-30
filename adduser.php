@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once "variables.php";
 /**********NEZAPOMENOUT*****************/
 header('Content-type: text/html;charset=UTF-8');
 
@@ -16,7 +17,8 @@ if (isset($_POST['go'])) {    //jestli tlačítko bylo zmačknuté tak jdi dál,
 
     if ($keystring != $_SESSION['captcha_keystring'] OR empty($keystring)) {
         unset($_SESSION['captcha_keystring']);
-        exit("Špatně jste opsali písmena a čísla z obrazku!");
+        $_SESSION['registrationfail'] = "Špatně jste opsali písmena a čísla z obrazku!";
+        header("Location: " . $_SERVER['SERVER_ROOT'] . "registration.php");
     }
 // V sessions se nám vytvoří proměnná captcha_keystring, které se přiřadí určita hodnota ( to co vidíme na obrázku )  
 // ověřime, zda je stejná jako v proměnné $keystring a jestli není prázdna.
@@ -73,7 +75,9 @@ if (isset($_POST['go'])) {    //jestli tlačítko bylo zmačknuté tak jdi dál,
         "edu|gov|arpa|info|biz|inc|name|[a-z]{2})|[0-9]{1,3}\.[0-9]{1,3}\.[0-" .
         "9]{1,3}\.[0-9]{1,3})$/is", $email)
     ) {
-        exit    ("E-mail není platný!");
+        $_SESSION['registrationfail'] = "E-mail není platný!";
+        header("Location: " . $_SERVER['SERVER_ROOT'] . "registration.php");
+
     }
 
 
@@ -82,7 +86,9 @@ if (isset($_POST['go'])) {    //jestli tlačítko bylo zmačknuté tak jdi dál,
 
 //V případě, že jakákoli proměnná je prázdna, zastavíme skript a vyvedeme hlášení
     if (empty($name) or empty($login) or empty($heslo) or empty($heslo)) {
-        exit("Vyplňte všechna pole");
+        $_SESSION['registrationfail'] = "Vyplňte všechna pole";
+        header("Location: " . $_SERVER['SERVER_ROOT'] . "registration.php");
+
     }
 
 
@@ -134,7 +140,9 @@ if (isset($_POST['go'])) {    //jestli tlačítko bylo zmačknuté tak jdi dál,
     } else {
 //Jestli existuje tak vyvedeme hlášení
         if (mysqli_num_rows($q1) == 1) {
-            exit("Uživatelské jméno je obsazené, vyberte si jiné");
+            $_SESSION['registrationfail'] = "Uživatelské jméno je obsazené, vyberte si jiné.";
+            header("Location: " . $_SERVER['SERVER_ROOT'] . "registration.php");
+
         } else {
 
 
@@ -151,9 +159,7 @@ if (isset($_POST['go'])) {    //jestli tlačítko bylo zmačknuté tak jdi dál,
 // vybereme identifikátor nového uživatele a pomocí něj vytvoříme kód aktivace účtu
                 $q3 = mysqli_query($dataconection, "SELECT `id` FROM `users` WHERE `login`='" . $login . "'");
                 $r3 = mysqli_fetch_assoc($q3);
-
-                mysqli_query($dataconection, "INSERT INTO `Rule_access` (`Rule_access_ID`, `Super_admin`, `View_lamp`, `Edit_lamp`, `Edit_rule`, `Edit_company`, `ID_user`, `ID_company`, `Set_role`, `x_Modify`) VALUES (NULL, '0', '1', '0', '0', '0', '" . $r3['id'] . "', '', '0', NOW());");
-
+                
 // do proměnné $activation zašifrujeme identifikátor a přihlášovací jméno
                 $activation = md5($r3['id']) . md5($login);
 
@@ -173,9 +179,11 @@ if (isset($_POST['go'])) {    //jestli tlačítko bylo zmačknuté tak jdi dál,
                 $_headers .= 'From: <info@lightmaster.cz>' . "\r\n";
 
                 if (@mail($_to, '=?UTF-8?B?' . base64_encode($_subject) . '?=', $_message, $_headers)) {
-                    echo "Za chvíli obdržíte e-mailovou zprávu s odkazem pro potvrzení registraci. Pozor! Odkaz je platný 1 hodinu. <a href=\"index.php\">Hlavní stránka</a>";
+                    $_SESSION['registrationfail'] = "Za chvíli obdržíte e-mailovou zprávu s odkazem pro potvrzení registraci. Pozor! Odkaz je platný 1 hodinu.";
+                    header("Location: " . $_SERVER['SERVER_ROOT']);
                 } else {
-                    echo "E-mail nebyl odeslán. Zkuste to za 5 minut.";
+                    $_SESSION['registrationfail'] = "E-mail nebyl odeslán. Zkuste se registrovat za 5 minut.";
+                    header("Location: " . $_SERVER['SERVER_ROOT']);
                 }
 
             }

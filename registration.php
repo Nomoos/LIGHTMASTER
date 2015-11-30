@@ -1,3 +1,9 @@
+<?php
+session_start();
+require_once "variables.php"
+
+?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -5,7 +11,10 @@
 <head>
     <title>Registrace</title>
     <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
-    <link rel="stylesheet" href="/www2/css/css/kraken.css">
+<?php
+echo '
+    <link rel="stylesheet" href="'.$_SERVER['SERVER_ROOT'].'css/css/kraken.css">';
+?>
     <style>
         .container {
             width: 20%;
@@ -18,13 +27,48 @@
             margin-top: 20px;
         }
 
+        .headcontainer{
+            margin-left: auto;
+            margin-right: auto;
+            width: 550px;
+        }
+        .flag {
+            width: 30px;
+        }
+        .flags{
+            float: right;
+        }
+        .description{
+            margin-left: 50px;
+        }
+        .projectname{
+            font-weight: bold ;
+        }
+        .registrationfail{
+            color:red;
+            font-weight: bold;
+        }
+
     </style>
 
 </head>
 
 <body>
+<?php
+echo '
+<div class="headcontainer">
+    <img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><div class="flags"><div class="projectname">Projekt: ME1 – C2M</div><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></div>
+    <div class="description">Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1.</div>
+</div>
+';
+?>
 <div class="container">
-
+    <?php
+    if(isset($_SESSION['registrationfail'])) {
+        echo '<div class="registrationfail">' . $_SESSION['registrationfail'] . '</div>';
+        unset($_SESSION['registrationfail']);
+    }
+    ?>
     <h1>Registrace<br>nového uživatele</h1>
 
     <form action="adduser.php" method="POST" enctype="multipart/form-data">

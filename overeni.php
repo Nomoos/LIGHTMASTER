@@ -104,7 +104,8 @@ if (isset($_POST['go'])) {
                 mysqli_query($dataconection, "INSERT INTO `chyba` (`ip`,`date`,`errors`) VALUES('" . $ip . "',NOW(),'1')");
             }
 
-            exit("Je nám líto, zadali jste chybné uživatelské jméno nebo heslo");
+            $_SESSION['loginfail'] = true;
+            header("Location: " . $_SERVER['SERVER_ROOT'] . "");
         } else {
 // V připadě, že uživatelské jméno a heslo odpovídají ( jsou v databázi ),
 // Vytvořime uživatelsou session.			
@@ -130,7 +131,8 @@ if (isset($_POST['go'])) {
                 setcookie("password", $_POST['heslo'], time() + 60 * 60 * 2);
                 setcookie("id", $r1['id'], time() + 60 * 60 * 2);
             }
-
+            $_SESSION['loginfail'] = '';
+            unset($_SESSION['loginfail']);
             header("Location: " . $_SERVER['SERVER_ROOT'] . "");
         }
     }
@@ -139,6 +141,8 @@ if (isset($_POST['go'])) {
 
 
 } else {
+    $_SESSION['loginfail'] = '';
+    unset($_SESSION['loginfail']);
     header("Location: " . $_SERVER['SERVER_ROOT'] . "");
 }
 ?>
