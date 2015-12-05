@@ -1,10 +1,15 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="description" content="">
 
-    <title>Map</title>
+    <title>
+    <?php
+    echo _('Map');
+         ?>
+    </title>
 </head>
 <body>
 
@@ -79,6 +84,10 @@ WHERE users.id=" . $_SESSION['id'] . ";
     if ($DEMO) {
         echo 'Nemáte oprávnění k žádné společnosti, ale můžete se podívat na:<br>';
         echo '<a class="link plans" href="?action=1&c=' . $DEMOCOMPANYID . '">Demo</a>';
+    }else{
+        echo 'Nebo se můžete se podívat na:<br>';
+        echo '<a class="link plans" href="?action=1&c=' . $DEMOCOMPANYID . '">Demo</a>';
+
     }
     echo "<br></div></div>";
 } else {

@@ -92,13 +92,13 @@ if ($_SESSION['id']) {
     $result = mysqli_query($dataconection, "SELECT *
 FROM  `users`
 LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.users_ID
-WHERE users.id=" . $_SESSION['id'] . ";");
+WHERE users.id=" . $_SESSION['id'] . " AND Rule.company_ID_company=".$DEMOCOMPANYID.";");
 
 
     $row = mysqli_fetch_array($result);
     extract($row);
     if ($Super_admin != 1) {
-        $resultcompany = mysqli_query($dataconection, "SELECT  rule_access.companyadmin AS is_admin,licensetype.License_type,company.ID_company AS ID_company,company.company_name AS company_name, company.company_display_name AS company_display_name,company.logo_link AS logolink FROM `users`
+        $resultcompany = mysqli_query($dataconection, "SELECT  rule_access.companyadmin AS is_admin,rule_access.is_member AS is_member,licensetype.License_type,company.ID_company AS ID_company,company.company_name AS company_name, company.company_display_name AS company_display_name,company.logo_link AS logolink FROM `users`
 LEFT OUTER JOIN license_managment ON users.id = license_managment.users_id
 LEFT OUTER JOIN company ON company.ID_company = license_managment.company_ID_company
 LEFT OUTER JOIN licensetype ON licensetype.License_type = license_managment.licensetype_license_type
@@ -137,8 +137,7 @@ if ($companyadmin) {
 ';
     require_once "pravidla.php";
 } else {
-
-    echo "Nejsem admin";
+    require_once "module/member_profile.php";
 }
 
 echo "<br>";

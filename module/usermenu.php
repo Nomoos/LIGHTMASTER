@@ -50,10 +50,9 @@ WHERE users.id=" . $_SESSION['id'] . ";
         }
     }
 
-    if ($DEMO) {
         $_SESSION['company_list'][1] = "Demo";
         echo '<option value="' . $DEMOCOMPANYID . '">Demo</option>';
-    }
+
 
     ?>
     </select>
@@ -67,8 +66,11 @@ WHERE users.id=" . $_SESSION['id'] . ";
 </div>
 <div class="last item">
 <a class="link" href="index.php?action=odhlasit_se">Odhlásit se</a>
+</div>'
+        ?>
 </div>
-  </div>';
+
+<?php
 
     If (!empty($_SESSION['company'])) {
         echo '<script>document.getElementById("company").value=' . $_SESSION['company'] . ';</script>';

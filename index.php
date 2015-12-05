@@ -1,7 +1,37 @@
 <?php
 session_start();
+
 include "variables.php";
+
+//preklady
+// I18N support information here
+//if(isset($_SESSION['Locale'])){
+//$language = $_SESSION['Locale'];
+//}else{
+//$language = $DEFAULTLOCALE;
+//}
+//echo $language;
+//putenv("LANG=" . $language);
+//setlocale(LC_ALL, $language);
+//
+//// Set the text domain as "messages"
+//$domain = "messages";
+//bindtextdomain($domain, "./locale");
+//bind_textdomain_codeset($domain, 'UTF-8');
+//
+//textdomain($domain);
+//echo '<br>';
+////preklad test
+//echo _('test');
+
+
 //Celý postup funguje na sessions. Právě v session se ukládají data uživatele, zatímco se nacházi na stránkach. Je důležite spustit sessions na začátku stránky!  
+if (isset($_GET['loc'])) {
+    $_SESSION['Locale'] = $_GET['loc'];
+    header("Location: " . $_SERVER['SERVER_ROOT'] . "");
+    die();
+}
+
 if (isset($_GET['p'])) {
     $_SESSION['page'] = $_GET['p'];
     header("Location: " . $_SERVER['SERVER_ROOT'] . "");
@@ -73,6 +103,7 @@ require_once 'db.php';
 
 if (!array_key_exists("page", $_SESSION)){
 
+
 /***************NOVÉ*********************/
 
 // Pokud v COOKIE jsou proměnné pro automatické přihlášení 
@@ -141,13 +172,14 @@ float: right;
     .description{
       margin-left: 50px;
     }
-    .loginfail{
-        color:red;
-        font-weight: bold;
-    }
+
     .projectname{
         font-weight: bold ;
     }
+    .loginfail{
+         color:red;
+         font-weight: bold;
+     }
 
 </style>
 
@@ -160,8 +192,13 @@ float: right;
 if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '') {
     echo '
     <div class="headcontainer">
-    <img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><div class="flags"><div class="projectname">Projekt: ME1 – C2M</div><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></div>
-    <div class="description">Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1.</div>
+    <img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><div class="flags"><div class="projectname">
+    ';
+    echo _('Projekt: ME1 – C2M');
+    echo '</div><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></div>
+    <div class="description">';
+    echo _('Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1.');
+    echo '</div>
     </div>
 <div class="container">';
     if(isset($_SESSION['loginfail'])) {
@@ -236,6 +273,7 @@ if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '
 
         if ($_SESSION['page'] == $key) {
             //echo $key;
+
             require_once $value;
             $pageset = 1;
         }

@@ -159,7 +159,8 @@ if (isset($_POST['go'])) {    //jestli tlačítko bylo zmačknuté tak jdi dál,
 // vybereme identifikátor nového uživatele a pomocí něj vytvoříme kód aktivace účtu
                 $q3 = mysqli_query($dataconection, "SELECT `id` FROM `users` WHERE `login`='" . $login . "'");
                 $r3 = mysqli_fetch_assoc($q3);
-                
+                mysqli_query($dataconection, "INSERT INTO rule_access (`Super_admin`, `View_lamp`, `Edit_lamp`, `Edit_rule`, `Edit_company`, `Set_role`, `company_ID_company`, `users_id`, `companyadmin`, `is_member`) VALUES ('0', '1', '0', '0', '0', '0', '".$DEMOCOMPANYID."',  '" . $r3['id'] . "', '0', '1');");
+
 // do proměnné $activation zašifrujeme identifikátor a přihlášovací jméno
                 $activation = md5($r3['id']) . md5($login);
 

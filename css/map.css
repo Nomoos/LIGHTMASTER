@@ -1,5 +1,5 @@
 body{
-        background: #FFE4C2;
+        background: #F8F8F8;
       }
       .buttons:hover{
       background: rgb(255, 228, 194);
@@ -54,7 +54,7 @@ body{
         color: white;
       }
       a.link:hover {
-        background: #FFE4C2;
+        background: #F8F8F8;
         text-decoration: none;
         color: black;
       }

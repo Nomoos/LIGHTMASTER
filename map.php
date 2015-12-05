@@ -30,13 +30,58 @@
 
             background: rgb(218, 160, 85);
         }
+        .headcontainer{
+            margin-left: auto;
+            margin-right: auto;
+            width: 550px;
+        }
+        .flag {
+            width: 30px;
+        }
+        .flags{
+            float: right;
+        }
+        .description{
+            margin-left: 50px;
+        }
 
+        .projectname{
+            font-weight: bold ;
+        }
+        .popcontainer {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, 0.5);
+
+        }
+        #zonepopcontainer {
+            display:None;
+        }
+
+        .popsubcontainer{
+            background: black;
+            width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 50px;
+        }
     </style>
 
 
 </head>
 
 <body>
+<?php
+echo '<div class="headcontainer">
+    <img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><div class="flags"><div class="projectname">Projekt: ME1 – C2M</div><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></div>
+    <div class="description">Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1.</div>
+</div>';
+?>
 <div class="container">
     <script> document.documentElement.className += ' js' </script>
     <div class="space50">
@@ -46,15 +91,44 @@
         require_once 'module/usermenu.php';
         require_once 'module/menu.php';
         require_once 'zones.php';
+        if(isset($_SESSION['zone'])) {
+            $actualzone = mysqli_query($dataconection, "SELECT * FROM area WHERE ID_area =" . $_SESSION['zone']);
+            while ($actualzonearr = mysqli_fetch_array($actualzone)) {
+                $zone = $actualzonearr['Area_name'];
+                $actualarea = $actualzonearr['Location'];
+            }
+        }
         ?>
+        <div class="filter">
+            <?php
+            if(isset($zone)){
+            echo '<script>var actualarea='.$actualarea.';</script><div class="zonename">'.$zone.'</div>';
+                echo '<div class="area_controler" onclick = "document.getElementById(\'zonepopcontainer\').style.display = \'block\';" style = "
+    cursor: pointer;
+" > Změnit zónu.</div >';
+            }else {
+
+                echo '<div class="area_controler" onclick = "document.getElementById(\'zonepopcontainer\').style.display = \'block\';" style = "
+    cursor: pointer;
+" > Vyberte zónu.</div >';
+            }
+            ?>
+
+
+            <?php
+            echo '<div class="buttons new_area" onclick = "new L.Draw.Polygon(map, drawControl.options.polygon).enable()" style = "
+    cursor: pointer;
+" >Nová zóna.</div >';
+
+            ?>
+
+        </div>
     </div>
     <div id="snippet--flashes"></div>
 
     <div id="content_container" class="content_container">
         <?php
-        if (isset($_SESSION['zoneshow'])) {
             echo '<div id="map" class="map_container"></div>';
-        }
         ?>
 
 
@@ -311,76 +385,94 @@
 
 
         var lamps = [];
-        var company_list = [];
+        var control_list = [];
         var plan_list = [];
         var groups = {};
+        var areas = [];
 
         // add a marker in the given location, attach some popup content to it and open the popup
         <?php
 
-        foreach($_SESSION['company_list'] as $ID_Company => $name ){
-        if(!empty($ID_Company)){
-        echo 'lamps["'.$ID_Company.'"]=[];';
-        echo 'company_list["'.$ID_Company.'"]=[];';
-        echo 'plan_list["'.$ID_Company.'"]=[];';
+        if(!empty($_SESSION['company'])){
+        $sql = "SELECT ID_area,Area_name, Location FROM area
+WHERE company_ID_company =".$_SESSION['company'];
+         if(isset($_SESSION['zone'])){
+        $sql = $sql." AND ID_area =".$_SESSION['zone'];
+        }
+        $aresult = mysqli_query($dataconection, $sql.";");
+        if (!$aresult) {
+            echo 'console.log("'.$_SESSION['company'].'");';
+            die('</script><div class="error">'. mysqli_error($dataconection).'</div><script>');
+        }
 
-        $result = mysqli_query($dataconection, "SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,workload_plan.ID_PLAN,workload_plan.PLAN_NAME,lamp.set_workload FROM `company`
+         while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+         echo('</script>'.$row["Area_name"].'<script>');
+         }
+
+        echo 'lamps["'.$_SESSION['company'].'"]=[];';
+        echo 'control_list["'.$_SESSION['company'].'"]=[];';
+        echo 'plan_list["'.$_SESSION['company'].'"]=[];';
+        $sql = "SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,workload_plan.ID_PLAN,workload_plan.PLAN_NAME,lamp.set_workload FROM `company`
         LEFT OUTER JOIN control_gateway AS Gate ON Gate.ID_company = company.ID_company
         LEFT OUTER JOIN lamp ON lamp.ID_control = Gate.ID_control
         LEFT OUTER JOIN workload_plan ON workload_plan.ID_PLAN = lamp.ID_workload
-        WHERE company.ID_company= ".$ID_Company." AND lamp.x_deleted = '0';");
+        WHERE company.ID_company= ".$_SESSION['company']." AND lamp.x_deleted = '0'";
+        if(isset($_SESSION['zone'])){
+        $sql = $sql."AND lamp.area_ID_area =".$_SESSION['zone'];
+        }
+        $result = mysqli_query($dataconection, $sql.";");
         if (!$result) {
-            echo 'console.log("'.$ID_Company.'");';
-            die('console.log("Invalid query: ' . mysqli_error($dataconection).'");');
+            echo 'console.log("'.$_SESSION['company'].'");';
+           die('</script><div class="error">' . mysqli_error($dataconection).'</div><script>');
         }
 
-        $controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM control_gateway WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
+        $controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM control_gateway WHERE ID_company = ".$_SESSION['company']." AND x_deleted = '0';");
         if (!$controls) {
-            die('</script><div class="error">Invalid query: ' . mysqli_error($dataconection).'</div><script>');
+            die('</script><div class="error">' . mysqli_error($dataconection).'</div><script>');
         }
-        //company_list je seznam spolecnosti a obsahuje na indexu id_spolecnosti vsechny jejich kontrolery
+        //control_list je seznam spolecnosti a obsahuje na indexu id_spolecnosti vsechny jejich kontrolery
         while ($company = mysqli_fetch_array($controls, MYSQLI_NUM)) {
-        echo 'company_list["'.$ID_Company.'"]['.$company[0].']= "'.$company[1].'";';
+        echo 'control_list["'.$_SESSION['company'].'"]['.$company[0].']= "'.$company[1].'";';
         };
 
 
-        $plans=mysqli_query($dataconection, "SELECT ID_PLAN,PLAN_NAME FROM workload_plan WHERE ID_company = ".$ID_Company." AND x_deleted = '0';");
+        $plans=mysqli_query($dataconection, "SELECT ID_PLAN,PLAN_NAME FROM workload_plan WHERE ID_company = ".$_SESSION['company']." AND x_deleted = '0';");
         if (!$plans) {
             die('</script><div class="error">Invalid query: ' . mysqli_error($dataconection).'</div><script>');
         }
         //plan_list je seznam planu spolecnosti
         while ($plan = mysqli_fetch_array($plans, MYSQLI_NUM)) {
-        echo 'plan_list["'.$ID_Company.'"]['.$plan[0].']= "'.$plan[1].'";';
+        echo 'plan_list["'.$_SESSION['company'].'"]['.$plan[0].']= "'.$plan[1].'";';
         };
-        echo 'plan_list["'.$ID_Company.'"][-1]= "Manual";';
+        echo 'plan_list["'.$_SESSION['company'].'"][-1]= "Manual";';
 
         while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
         if(!empty($row[0])){
         if($row[4]==1){
-        echo 'lamps["'.$ID_Company.'"]['.$row[2].'] = L.marker(['.$row[0].', '.$row[1].'],{icon: lampIcon});';
+        echo 'lamps["'.$_SESSION['company'].'"]['.$row[2].'] = L.marker(['.$row[0].', '.$row[1].'],{icon: lampIcon});';
         }else{
-        echo 'lamps["'.$ID_Company.'"]['.$row[2].'] = L.marker(['.$row[0].', '.$row[1].'],{icon: lampIcon_nesviti});';
+        echo 'lamps["'.$_SESSION['company'].'"]['.$row[2].'] = L.marker(['.$row[0].', '.$row[1].'],{icon: lampIcon_nesviti});';
         }
-        echo'lamps["'.$ID_Company.'"]['.$row[2].'].gate = "'.$row[3].'";';
+        echo'lamps["'.$_SESSION['company'].'"]['.$row[2].'].gate = "'.$row[3].'";';
 
         $actual_workload=mysqli_query($dataconection, "SELECT logs.workload FROM `logs` WHERE logs.ID_lamp ='".$row[2]."' ORDER by logs.time DESC;");
         $actual_workload=mysqli_fetch_array($actual_workload);
         if(!empty($actual_workload[0])){
-        echo'lamps["'.$ID_Company.'"]['.$row[2].'].actual_workload = "'.$actual_workload[0].'";';
+        echo'lamps["'.$_SESSION['company'].'"]['.$row[2].'].actual_workload = "'.$actual_workload[0].'";';
         }else{
-        echo 'lamps["'.$ID_Company.'"]['.$row[2].'].actual_workload = "Neni k dispozici";';
+        echo 'lamps["'.$_SESSION['company'].'"]['.$row[2].'].actual_workload = "Neni k dispozici";';
         }
-        echo 'lamps["'.$ID_Company.'"]['.$row[2].'].enabled = "'.$row[4].'";';
+        echo 'lamps["'.$_SESSION['company'].'"]['.$row[2].'].enabled = "'.$row[4].'";';
 
         if(!empty($row[5])){
-        echo 'lamps["'.$ID_Company.'"]['.$row[2].'].workload_plan = "'.$row[5].'";';
+        echo 'lamps["'.$_SESSION['company'].'"]['.$row[2].'].workload_plan = "'.$row[5].'";';
         }else{
-        echo 'lamps["'.$ID_Company.'"]['.$row[2].'].workload_plan = "-1";';
+        echo 'lamps["'.$_SESSION['company'].'"]['.$row[2].'].workload_plan = "-1";';
         }
-        echo 'lamps["'.$ID_Company.'"]['.$row[2].'].workload = "'.$row[7].'";';
-        echo 'lamps["'.$ID_Company.'"]['.$row[2].'].company_list = company_list;
+        echo 'lamps["'.$_SESSION['company'].'"]['.$row[2].'].workload = "'.$row[7].'";';
+        echo 'lamps["'.$_SESSION['company'].'"]['.$row[2].'].control_list = control_list;
 
-        lamps["'.$ID_Company.'"]['.$row[2].'].on(\'click\',function editace(){
+        lamps["'.$_SESSION['company'].'"]['.$row[2].'].on(\'click\',function editace(){
             if(edited_lamp==0&&new_lamp==0){
             select_lamp('.$row[2].');
             }
@@ -395,7 +487,7 @@
             };
             echo 'groups.'.$name.' = new L.LayerGroup();';
             }
-         }
+
         if(!empty($_POST['lamp_id'])){
         if($_POST['status']!='delete'){
         echo 'select_lamp("'.$_POST['lamp_id'].'");';
@@ -422,8 +514,8 @@
             edited_lamp = lamps[select_company][id].getLatLng();
 
             select = '<select id="select_control" class="lamp_control" onchange="new_controler(this.value);">';
-            for (temp in company_list[select_company]) {
-                select = select + '<option id=' + company_list[select_company][temp] + ' value="' + temp + '">' + company_list[select_company][temp] + '</option>';
+            for (temp in control_list[select_company]) {
+                select = select + '<option id=' + control_list[select_company][temp] + ' value="' + temp + '">' + control_list[select_company][temp] + '</option>';
             }
             select = select + '<option value="new">Nový kontroler</option></select><div id="new_input"></div>';
 
@@ -457,7 +549,7 @@
 
             document.getElementById("lampid").innerHTML = '<div class="description_lamp"><div >ID Lampy:</div> ' + id + '<div class="nazev_atributu">Kontroluje:</div>' + select + '<div class="nazev_atributu">Zapnutá:</div>' + enabled + workload + '<div id="cords"></div></div>';
             // pokud společnost nemá kontroler tak vytvarime spolu z lampou nový
-            if (company_list[select_company].length == 0) {
+            if (control_list[select_company].length == 0) {
                 new_controler("new");
             }
             //staré lampy
@@ -621,7 +713,8 @@
         }
 
         //testy editovani polygonu
-        var featureGroup = L.featureGroup().addTo(map);
+
+        var newfeatureGroup = L.featureGroup().addTo(map);
         drawControl = new L.Control.Draw({
             draw: {
                 polygon: {
@@ -634,7 +727,7 @@
                 marker: false
             },
             edit: {
-                featureGroup: featureGroup
+                featureGroup: newfeatureGroup
             },
             position: 'topleft'
         });
@@ -643,27 +736,43 @@
             var layers = e.layers;
             layers.eachLayer(function (layer) {
                 //do whatever you want, most likely save back to db
-                var layer = e.layers;
                 var shape = layer.toGeoJSON()
-                var shape_for_db = JSON.stringify(shape);
+                var shape_for_db = JSON.stringify(shape.geometry.coordinates[0]);
                 console.log(shape_for_db)
+                //save db area
             });
         });
         map.on('draw:created', function (e) {
-            featureGroup.addLayer(e.layer);
+            newfeatureGroup.addLayer(e.layer);
 
             var layer = e.layer;
             var shape = layer.toGeoJSON()
-            var shape_for_db = JSON.stringify(shape);
+            var shape_for_db = JSON.stringify(shape.geometry.coordinates[0]);
             console.log(shape_for_db)
+            //save db area
         });
         map.on('draw:drawstart', function (e) {
             console.log(e);
         });
         // konec tesu editu polygonu
 
+        //add actual area to map
+        var text = "[";
+        for (i = 0; i < actualarea.geometry.coordinates[0].length; i++) {
+            text += "[" + actualarea.geometry.coordinates[0][i][1] + ","+ actualarea.geometry.coordinates[0][i][0] +"]";
+            if(i+1 < actualarea.geometry.coordinates[0].length){
+               text += ",";
+            }
+        }
+        text += "]"
+        console.log(text);
+        newfeatureGroup.addLayer(L.polygon(JSON.parse("[" + text + "]")));
+        //newfeatureGroup.addLayer(L.polygon(text));
+        //newfeatureGroup.addLayer(areaLayer);
+        //L.geoJson(actualarea).addTo(map);
 
     </script>
 </div>
+<div onclick="polygonDrawer.enable();"></div>
 </body>
 </html>
