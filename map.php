@@ -1,3 +1,41 @@
+<?php
+if(!empty($_POST)) {
+
+    if (isset($_POST['deletearea'])) {
+        if (isset($_POST['deleteareaid'])) {
+        if ($DEBUG) {
+            echo '<script>console.log("Mazu zónu' . $_POST['deleteareaid'] . '");</script>';
+        }
+        $sql = "DELETE FROM area WHERE ID_area=" . $_POST['deleteareaid'] . ";";
+        mysqli_query($dataconection, $sql);
+        $_SESSION['zone'] = '';
+        unset($_SESSION['zone']);
+    }
+    }
+
+//create area
+    if (isset($_POST['areaname'])) {
+        if (isset($_POST['arealocation'])) {
+            if ($_POST['createarea'] == 1) {
+                $sql = "INSERT INTO area (`Area_name`, `Location`, `company_ID_company`) VALUES ('" . $_POST['areaname'] . "', '" . $_POST['arealocation'] . "', '" . $_SESSION['company'] . "');";
+
+                mysqli_query($dataconection, $sql);
+                $sql = "SELECT ID_area,company_ID_company FROM area WHERE company_ID_company=".$_SESSION['company']." ORDER BY ID_area DESC LIMIT 1;";
+                $result = mysqli_query($dataconection, $sql);
+                $_SESSION['zone']=mysqli_fetch_array($result)['ID_area'];
+                //unset($_SESSION['zone']);
+            } else {
+                $sql = "UPDATE `lamps.lightmaster2`.`area` SET `Area_name`='" . $_POST['areaname'] . "', `Location`='" . $_POST['arealocation'] . "' WHERE `ID_area`='" . $_SESSION['zone'] . "';
+";
+                mysqli_query($dataconection, $sql);
+            }
+        }
+    }
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,6 +53,7 @@
     <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet'/>
     <link rel="stylesheet" href="css/css/kraken.css"/>
     <link rel="stylesheet" href="css/map.css"/>
+    <link rel="stylesheet" href="css/table.css"/>
     <link rel="shortcut icon" href="img/sviti.png"/>
 
     <!-- testy -->
@@ -62,14 +101,22 @@
         #zonepopcontainer {
             display:None;
         }
+        #newzonepopcontainer {
+            display:None;
+        }
 
         .popsubcontainer{
-            background: black;
+            background: #888888;
             width: 800px;
             margin-left: auto;
             margin-right: auto;
             margin-top: 50px;
         }
+
+        .arealistpageactive{
+            color:black;
+        }
+
     </style>
 
 
@@ -91,7 +138,7 @@ echo '<div class="headcontainer">
         require_once 'module/usermenu.php';
         require_once 'module/menu.php';
         require_once 'zones.php';
-        if(isset($_SESSION['zone'])) {
+        if(isset($_SESSION['zone']) AND !isset($_POST['deletearea'])) {
             $actualzone = mysqli_query($dataconection, "SELECT * FROM area WHERE ID_area =" . $_SESSION['zone']);
             while ($actualzonearr = mysqli_fetch_array($actualzone)) {
                 $zone = $actualzonearr['Area_name'];
@@ -99,29 +146,47 @@ echo '<div class="headcontainer">
             }
         }
         ?>
-        <div class="filter">
+        <div class="rTable filter">
+            <div class="rTableRow zone">
             <?php
             if(isset($zone)){
-            echo '<script>var actualarea='.$actualarea.';</script><div class="zonename">'.$zone.'</div>';
-                echo '<div class="area_controler" onclick = "document.getElementById(\'zonepopcontainer\').style.display = \'block\';" style = "
+            echo '<script>objerase = {
+                    "deletearea": 1,
+                    "deleteareaid":'.$_SESSION['zone'].'
+                };
+                var actualarea='.$actualarea.';</script><div class="rTableCell zonename">'.$zone.'</div>';
+                echo '<div class="rTableCell area_controler" onclick = "document.getElementById(\'zonepopcontainer\').style.display = \'block\';document.getElementById(\'map\').style.display = \'none\';" style = "
     cursor: pointer;
-" > Změnit zónu.</div >';
+" > Změnit zónu</div >';
+                echo '<div class="rTableCell area_controler" onclick = "document.getElementById(\'newarea\').value = \''.$actualarea.'\';
+                document.getElementById(\'newareaformareaname\').value = \''.$zone.'\';
+                document.getElementById(\'createarea\').value = 0;
+                document.getElementById(\'newareaformbutton\').value = \'Přejmenovat zónu\';
+                document.getElementById(\'newzonepopcontainer\').style.display = \'block\';" style = "
+    cursor: pointer;
+" > Přejmenovat zónu</div >';
+                echo '<div class="rTableCell area_controler" onclick = "post(\'\', objerase);" style = "
+    cursor: pointer;
+" > Smazat zónu</div >';
+
+
             }else {
 
-                echo '<div class="area_controler" onclick = "document.getElementById(\'zonepopcontainer\').style.display = \'block\';" style = "
+                echo '<div class="rTableCell area_controler" onclick = "document.getElementById(\'zonepopcontainer\').style.display = \'block\';document.getElementById(\'map\').style.display = \'none\';" style = "
     cursor: pointer;
 " > Vyberte zónu.</div >';
             }
             ?>
+            </div>
 
-
+            <div class="rTableRow globalcontrols">
             <?php
-            echo '<div class="buttons new_area" onclick = "new L.Draw.Polygon(map, drawControl.options.polygon).enable()" style = "
+            echo '<div class="rTableCell globalcontrol new_area" onclick = "new L.Draw.Polygon(map, drawControl.options.polygon).enable()" style = "
     cursor: pointer;
-" >Nová zóna.</div >';
+" >Nová zóna</div >';
 
             ?>
-
+        </div>
         </div>
     </div>
     <div id="snippet--flashes"></div>
@@ -150,10 +215,10 @@ echo '<div class="headcontainer">
 
     <script>
         <?php
-        If(!empty($_POST)){
+        if(!empty($_POST)){
 
         //zoom
-        If(!empty($_POST['zoom'])){
+        if(!empty($_POST['zoom'])){
         echo 'var map = L.map(\'map\').setView(['.$_POST['lat_default'].', '.$_POST['lng_default'].'], '.$_POST['zoom'].');';
 
         }else{
@@ -162,14 +227,14 @@ echo '<div class="headcontainer">
 
 
         //v postu je id
-        If(!empty($_POST['lamp_id'])){
+        if(!empty($_POST['lamp_id'])){
         //v postu je status
-        If(!empty($_POST['status'])){
+        if(!empty($_POST['status'])){
 
         //status lamp switch
-        If($_POST['status']=="switch_status"){
-        If(!empty($_POST['lamp_status'])){
-        If($_POST['lamp_status']=='-1'){
+        if($_POST['status']=="switch_status"){
+        if(!empty($_POST['lamp_status'])){
+        if($_POST['lamp_status']=='-1'){
         $_POST['lamp_status']=0;
         }
         echo "console.log('Přepinam lampu ".$_POST['lamp_id']." do stavu ".$_POST['lamp_status']."');";
@@ -737,9 +802,24 @@ WHERE company_ID_company =".$_SESSION['company'];
             layers.eachLayer(function (layer) {
                 //do whatever you want, most likely save back to db
                 var shape = layer.toGeoJSON()
-                var shape_for_db = JSON.stringify(shape.geometry.coordinates[0]);
+                var shape_for_db = getcoordsfordb(shape);
                 console.log(shape_for_db)
-                //save db area
+
+                //save db area bez zmeny jmena
+                objnewarea = {
+                    'areaname':'<?php echo $zone; ?>',
+                    'arealocation':shape_for_db,
+                        'createarea':0
+
+                };
+                post('',objnewarea);
+
+                //save db area se zmenou jmena
+                //document.getElementById('newarea').value = shape_for_db;
+                //document.getElementById('newareaformareaname').value = '<?php //echo $zone; ?>';
+                //document.getElementById('createarea').value = 0;
+                //document.getElementById('newareaformbutton').value = 'Změnit zónu';
+                //document.getElementById('newzonepopcontainer').style.display = 'block';
             });
         });
         map.on('draw:created', function (e) {
@@ -747,15 +827,19 @@ WHERE company_ID_company =".$_SESSION['company'];
 
             var layer = e.layer;
             var shape = layer.toGeoJSON()
-            var shape_for_db = JSON.stringify(shape.geometry.coordinates[0]);
-            console.log(shape_for_db)
-            //save db area
+            var shape_for_db = getcoordsfordb(shape);
+
+            //prepare save db area
+            document.getElementById('newarea').value = shape_for_db;
+
+            document.getElementById('newzonepopcontainer').style.display = 'block';
         });
         map.on('draw:drawstart', function (e) {
             console.log(e);
         });
         // konec tesu editu polygonu
 
+        function getcoordsfordb(actualarea){
         //add actual area to map
         var text = "[";
         for (i = 0; i < actualarea.geometry.coordinates[0].length; i++) {
@@ -764,14 +848,33 @@ WHERE company_ID_company =".$_SESSION['company'];
                text += ",";
             }
         }
-        text += "]"
-        console.log(text);
-        newfeatureGroup.addLayer(L.polygon(JSON.parse("[" + text + "]")));
+
+            text += "]";
+            console.log(text);
+        return text
+        }
+        var actualarea = actualarea || undefined;
+        if(actualarea) {
+            newfeatureGroup.addLayer(L.polygon(actualarea));
+            map.fitBounds(newfeatureGroup.getBounds())
+        }
         //newfeatureGroup.addLayer(L.polygon(text));
         //newfeatureGroup.addLayer(areaLayer);
         //L.geoJson(actualarea).addTo(map);
 
     </script>
+</div>
+<div class="popcontainer" id="newzonepopcontainer">
+
+    <div class="popsubcontainer">
+    <form action="" method="post">
+        <span style="font-weight: bold">Zadejte jméno zóny:</span>
+        <input type="text" name="areaname" id="newareaformareaname" value="">
+        <input type="hidden" name="arealocation" id="newarea" value="" >
+        <input type="hidden" name="createarea" id="createarea" value=1 >
+        <input type="submit" id="newareaformbutton" value="Vytvořit zónu"></button>
+    </form>
+    </div>
 </div>
 <div onclick="polygonDrawer.enable();"></div>
 </body>

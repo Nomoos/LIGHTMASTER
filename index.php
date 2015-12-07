@@ -1,36 +1,11 @@
 <?php
 session_start();
-
 include "variables.php";
-
-//preklady
-// I18N support information here
-//if(isset($_SESSION['Locale'])){
-//$language = $_SESSION['Locale'];
-//}else{
-//$language = $DEFAULTLOCALE;
-//}
-//echo $language;
-//putenv("LANG=" . $language);
-//setlocale(LC_ALL, $language);
-//
-//// Set the text domain as "messages"
-//$domain = "messages";
-//bindtextdomain($domain, "./locale");
-//bind_textdomain_codeset($domain, 'UTF-8');
-//
-//textdomain($domain);
-//echo '<br>';
-////preklad test
-//echo _('test');
+require_once "test/l10n.php";
 
 
 //Celý postup funguje na sessions. Právě v session se ukládají data uživatele, zatímco se nacházi na stránkach. Je důležite spustit sessions na začátku stránky!  
-if (isset($_GET['loc'])) {
-    $_SESSION['Locale'] = $_GET['loc'];
-    header("Location: " . $_SERVER['SERVER_ROOT'] . "");
-    die();
-}
+
 
 if (isset($_GET['p'])) {
     $_SESSION['page'] = $_GET['p'];
@@ -157,29 +132,33 @@ echo '
     .login {
         margin-bottom: 5px
     }
-    
-    .headcontainer{
+
+    .headcontainer {
         margin-left: auto;
-    margin-right: auto;
-    width: 550px;
-    }
-    .flag {
-    width: 30px;
-}
-.flags{
-float: right;
-}
-    .description{
-      margin-left: 50px;
+        margin-right: auto;
+        width: 550px;
     }
 
-    .projectname{
-        font-weight: bold ;
+    .flag {
+        width: 30px;
     }
-    .loginfail{
-         color:red;
-         font-weight: bold;
-     }
+
+    .flags {
+        float: right;
+    }
+
+    .description {
+        margin-left: 50px;
+    }
+
+    .projectname {
+        font-weight: bold;
+    }
+
+    .loginfail {
+        color: red;
+        font-weight: bold;
+    }
 
 </style>
 
@@ -188,6 +167,11 @@ float: right;
 <body>
 
 <?php
+if($DEBUG){
+echo $_SESSION['Locale'];
+echo '<br>' . $domain;
+echo '<br>' . _('test');
+}
 //Ověřujeme, zda byla vybrána nějaka data z databáze ( avatar ). Jestli ne v COOKIE jsou špatné heslo nebo login.
 if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '') {
     echo '
