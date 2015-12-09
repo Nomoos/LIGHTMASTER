@@ -31,7 +31,8 @@ WHERE users.id=" . $_SESSION['id'] . ";
 </script>
 
 <div class="nav">
-    Společnost:<?php
+    <?php
+    echo _('Společnost:');
 
     echo '<select id="company" class="nav_select item" name="company" onchange="switch_company();">';
 
@@ -62,10 +63,10 @@ WHERE users.id=" . $_SESSION['id'] . ";
     echo '
 
 <div class="first item">
-<a class="link" href="?p=copanyprofile">Přistupová pravidla</a>
+<a class="link" href="?p=copanyprofile">'._('Přistupová pravidla').'</a>
 </div>
 <div class="last item">
-<a class="link" href="index.php?action=odhlasit_se">Odhlásit se</a>
+<a class="link" href="index.php?action=odhlasit_se">'._('Odhlásit se').'</a>
 </div>'
         ?>
 </div>
@@ -81,7 +82,7 @@ WHERE users.id=" . $_SESSION['id'] . ";
     }
 
     } else {
-        echo 'Neprihlasen.';
+        echo _('Neprihlasen');
     }
     ?>
 

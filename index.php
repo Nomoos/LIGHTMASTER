@@ -108,7 +108,9 @@ echo '
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<title>Přihlašení uživatele</title>
+	<title>';
+  echo _('Přihlašení uživatele');
+  echo '</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" >
 
 <link rel="stylesheet" href="' . $_SERVER['SERVER_ROOT'] . '/css/css/kraken.css" >';
@@ -168,7 +170,7 @@ echo '
 
 <?php
 if($DEBUG){
-echo $_SESSION['Locale'];
+echo $_SESSION['locale'];
 echo '<br>' . $domain;
 echo '<br>' . _('test');
 }
@@ -179,14 +181,14 @@ if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '
     <img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><div class="flags"><div class="projectname">
     ';
     echo _('Projekt: ME1 – C2M');
-    echo '</div><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></div>
+    echo '</div><a href="?loc=cs_CZ"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"></a><a href="?loc=en_US"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></a><a href="?loc=vychozi"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/default.png" alt="Develop flag"></a></div>
     <div class="description">';
     echo _('Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1.');
     echo '</div>
     </div>
 <div class="container">';
     if(isset($_SESSION['loginfail'])) {
-        echo '<div class="loginfail">Chybné uživatelské jméno nebo heslo.</div>';
+        echo '<div class="loginfail">'._('Chybné uživatelské jméno nebo heslo.').'</div>';
         unset($_SESSION['loginfail']);
     }
 
@@ -196,11 +198,11 @@ if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '
     }
 
     echo '
-<h1>Přihlásit se</h1>
+<h1>'._('Přihlásit se').'</h1>
 <form action="overeni.php" method="POST">
 <!--  overeni.php je skript pro ověření zadaných dat, tzn. po klíknutí na tlačítko Ok se data pošlou do tohoto souboru metodou POST  -->
 
-	<div><label for="login">Login:</label></div>';
+	<div><label for="login">'._('Uživatelské jméno:').'</label></div>';
 // Jestli existuje proměnná COOKIE['login']. Bude jestli uživatel při předchozím přihlášení zaškrtnul políčko "Zapamatovat mě"   
     if (isset($_COOKIE['login'])) {
 // Do atributu value přidame hodnotu proměnné COOKIE s loginem
@@ -209,7 +211,7 @@ if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '
         echo '<div><input type="text" name="login" ></div>';
     }
 
-    echo '	<div><label for="heslo">Heslo:</label></div>';
+    echo '	<div><label for="heslo">'._('Heslo:').'</label></div>';
 // Jestli existuje proměnná COOKIE['login']. Bude jestli uživatel při předchozím přihlášení zaškrtnul políčko "Zapamatovat mě"   
     if (isset($_COOKIE['password'])) {
 // Do atributu value přidame hodnotu proměnné COOKIE s heslem
@@ -219,19 +221,19 @@ if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '
     }
 
     echo '
-<div><input name="save" type="checkbox" value="1">Zapamatovat si mě</div>
+<div><input name="save" type="checkbox" value="1">'._('Zapamatovat si mě').'</div>
 
 <!--------------NOVÉ---------------------->
 
-<div><input name="autovstup" type="checkbox" value="1">Automatické přihlášení.</div>
+<div><input name="autovstup" type="checkbox" value="1">'._('Automatické přihlášení').'</div>
 
 <!--------------KONEC NOVÉHO---------------------->
 
-<div><input class="login" type="submit" name="go" value="Přihlásit se"></div>
+<div><input class="login" type="submit" name="go" value="'._('Přihlásit se').'"></div>
 </form>';
 
 
-    echo '<div class="back"><input class="button" type="button" onclick=\'window.location.href="registration.php";\' value="Nová registrace"><a class="link" type="button" onclick=\'window.location.href="new_pass.php";\'>Zapomněli jste heslo?</div>';
+    echo '<div class="back"><input class="button" type="button" onclick=\'window.location.href="registration.php";\' value="'._('Nová registrace').'"><a class="link" type="button" onclick=\'window.location.href="new_pass.php";\'>'._('Zapomněli jste heslo?').'</div>';
 
 } else {
     require_once 'pristup.php';

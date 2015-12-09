@@ -1,7 +1,10 @@
 <?php 
+try {
 // zákaz ukládání stránky do vyrovnávací paměti 
 header("Cache-Control: no-cache"); 
 // detekce jazyka a inicializace lokalizačního mechanismu
+
+
 include "../variables.php";
 require_once "l10n.php"; 
 ?> 
@@ -37,9 +40,14 @@ require_once "l10n.php";
 <a href="nlsdemo.php"><?php echo _("Generate new matrix")?></a> 
 <?php endif ?> 
 <div align="center"> 
-  <a href="nlsdemo.php?loc=en">English interface</a> |
-  <a href="nlsdemo.php?loc=cs"><?php echo _("Czech interface")?></a> |
+  <a href="nlsdemo.php?loc=en_US">English interface</a> |
+  <a href="nlsdemo.php?loc=cs_CZ"><?php echo _("Czech interface")?></a> |
   <a href="nlsdemo.php?loc=auto"><?php echo _("Autodetect language")?></a>
 </div> 
 </body> 
 </html>
+<?php
+} catch (Exception $e) {
+echo 'Caught exception: ',  $e->getMessage(), "\n";
+}
+?>

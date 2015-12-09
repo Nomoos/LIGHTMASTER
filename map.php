@@ -22,7 +22,8 @@ if(!empty($_POST)) {
                 mysqli_query($dataconection, $sql);
                 $sql = "SELECT ID_area,company_ID_company FROM area WHERE company_ID_company=".$_SESSION['company']." ORDER BY ID_area DESC LIMIT 1;";
                 $result = mysqli_query($dataconection, $sql);
-                $_SESSION['zone']=mysqli_fetch_array($result)['ID_area'];
+                $row = mysqli_fetch_array($result);
+                $_SESSION['zone']= $row['ID_area'];
                 //unset($_SESSION['zone']);
             } else {
                 $sql = "UPDATE `lamps.lightmaster2`.`area` SET `Area_name`='" . $_POST['areaname'] . "', `Location`='" . $_POST['arealocation'] . "' WHERE `ID_area`='" . $_SESSION['zone'] . "';
@@ -125,8 +126,8 @@ if(!empty($_POST)) {
 <body>
 <?php
 echo '<div class="headcontainer">
-    <img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><div class="flags"><div class="projectname">Projekt: ME1 – C2M</div><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></div>
-    <div class="description">Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1.</div>
+    <img class="logolight" src="'.$_SERVER['SERVER_ROOT'].'img/logolight.png" alt="Lightmaster logo"><div class="flags"><div class="projectname">'._('Projekt: ME1 – C2M').'</div><a href="?loc=cs_CZ"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/cz.png" alt="Czech flag"></a><a href="?loc=en_US"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/en.png" alt="English flag"></a><a href="?loc=vychozi"><img class="flag" src="'.$_SERVER['SERVER_ROOT'].'img/countryflags/default.png" alt="Develop flag"></a></div>
+    <div class="description">'._('Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1.').'</div>
 </div>';
 ?>
 <div class="container">
@@ -746,13 +747,13 @@ WHERE company_ID_company =".$_SESSION['company'];
 
 
         map.on('click', function (e) {
+            console.log("map");
             if (edited_lamp == 0) {
-                unselect_all()
+                unselect_all();
                 if (new_lamp == 0) {
                     document.getElementById("new_lamp_btt").className = "buttons";
                 }
             }
-            ;
             if (new_lamp == 1) {
                 console.log(e.latlng);
                 lamps[select_company]['new'] = L.marker(e.latlng, {icon: lampIcon}).addTo(markers).on('click', function editace() {
@@ -856,6 +857,32 @@ WHERE company_ID_company =".$_SESSION['company'];
         var actualarea = actualarea || undefined;
         if(actualarea) {
             newfeatureGroup.addLayer(L.polygon(actualarea));
+            newfeatureGroup.on('click', function (e) {
+                console.log("newfeatureGroup");
+                if (edited_lamp == 0) {
+                    unselect_all();
+                    if (new_lamp == 0) {
+                        document.getElementById("new_lamp_btt").className = "buttons";
+                    }
+                }
+                if (new_lamp == 1) {
+                    console.log(e.latlng);
+                    lamps[select_company]['new'] = L.marker(e.latlng, {icon: lampIcon}).addTo(markers).on('click', function editace() {
+                            if (edited_lamp == 0 && new_lamp == 0) {
+                                select_lamp('new');
+                            }
+                        }
+                    ).on('dragend', function upradecords() {
+                            if (edited_lamp != 0) {
+                                update_cords('new');
+                            }
+                        }
+                    );
+                    new_lamp = 0;
+                    edit_lamp('new');
+                }
+                ;
+            });
             map.fitBounds(newfeatureGroup.getBounds())
         }
         //newfeatureGroup.addLayer(L.polygon(text));

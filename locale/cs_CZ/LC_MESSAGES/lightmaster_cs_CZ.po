@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lightmaster\n"
-"POT-Creation-Date: 2015-12-05 08:59+0100\n"
-"PO-Revision-Date: 2015-12-06 12:20+0100\n"
+"POT-Creation-Date: 2015-12-09 13:27+0100\n"
+"PO-Revision-Date: 2015-12-09 13:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: cs\n"
@@ -19,6 +19,10 @@ msgstr ""
 msgid "Map"
 msgstr "Mapa"
 
+# index.php:112
+msgid "Přihlašení uživatele"
+msgstr "Přihlašení uživatele"
+
 # index.php:24
 msgid "test"
 msgstr "Kontrola"
@@ -30,6 +34,71 @@ msgstr "Projekt: ME1 – C2M"
 # index.php:166
 msgid "Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1."
 msgstr "Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1."
+
+# index.php:191
+msgid "Chybné uživatelské jméno nebo heslo."
+msgstr "Chybné uživatelské jméno nebo heslo."
+
+# index.php:201
+# index.php:232
+msgid "Přihlásit se"
+msgstr "Přihlásit se"
+
+# index.php:205
+msgid "Uživatelské jméno:"
+msgstr "Uživatelské jméno:"
+
+# index.php:214
+msgid "Heslo:"
+msgstr "Heslo:"
+
+# index.php:224
+msgid "Zapamatovat si mě"
+msgstr "Zapamatovat si mě"
+
+# index.php:228
+msgid "Automatické přihlášení"
+msgstr "Automatické přihlášení"
+
+# index.php:236
+msgid "Nová registrace"
+msgstr "Nová registrace"
+
+# index.php:236
+msgid "Zapomněli jste heslo?"
+msgstr "Zapomněli jste heslo?"
+
+# menu.php:6
+msgid "Mapa"
+msgstr "Mapa"
+
+# menu.php:7
+msgid "Lampy"
+msgstr "Lampy"
+
+# menu.php:8
+msgid "Statistika"
+msgstr "Statistika"
+
+# menu.php:9
+msgid "Plánování"
+msgstr "Plánování"
+
+# usermenu.php:35
+msgid "Společnost:"
+msgstr "Společnost:"
+
+# usermenu.php:66
+msgid "Přistupová pravidla"
+msgstr "Přistupová pravidla"
+
+# usermenu.php:69
+msgid "Odhlásit se"
+msgstr "Odhlásit se"
+
+# usermenu.php:85
+msgid "Neprihlasen"
+msgstr "Neprihlasen"
 
 # test-locale.php:5
 msgid "Hello World!"
@@ -70,6 +139,10 @@ msgstr "Česká rozhraní"
 # nlsdemo.php:40
 msgid "Autodetect language"
 msgstr "Auto detekce jazyka"
+
+# zones.php:20
+msgid "Opravdu chcete smazat zónu?"
+msgstr "Opravdu chcete smazat zónu?"
 
 #~ msgid "HELLO_WORLD_2"
 #~ msgstr "Česky"
