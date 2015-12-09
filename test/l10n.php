@@ -11,7 +11,8 @@ if (isset($_GET['loc'])) {
 if(isset($_SESSION['locale'])){
   $lang = $_SESSION['locale'];
 }else{
-  $lang = $DEFAULTLOCALE;
+    $_SESSION['locale']= $DEFAULTLOCALE;
+    $lang = $DEFAULTLOCALE;
 }
 $domain = $domain."_".$lang;
 // změna jazyka používaného knihovnou gettext 

@@ -158,36 +158,42 @@ echo '<div class="headcontainer">
                 var actualarea='.$actualarea.';</script><div class="rTableCell zonename">'.$zone.'</div>';
                 echo '<div class="rTableCell area_controler" onclick = "document.getElementById(\'zonepopcontainer\').style.display = \'block\';document.getElementById(\'map\').style.display = \'none\';" style = "
     cursor: pointer;
-" > Změnit zónu</div >';
+" >'._('Přepnout zónu').'</div >';
                 echo '<div class="rTableCell area_controler" onclick = "document.getElementById(\'newarea\').value = \''.$actualarea.'\';
                 document.getElementById(\'newareaformareaname\').value = \''.$zone.'\';
                 document.getElementById(\'createarea\').value = 0;
                 document.getElementById(\'newareaformbutton\').value = \'Přejmenovat zónu\';
                 document.getElementById(\'newzonepopcontainer\').style.display = \'block\';" style = "
     cursor: pointer;
-" > Přejmenovat zónu</div >';
+" >'._('Přejmenovat zónu').'</div >';
                 echo '<div class="rTableCell area_controler" onclick = "post(\'\', objerase);" style = "
     cursor: pointer;
-" > Smazat zónu</div >';
+" >'._('Smazat zónu').'</div >';
+                echo '<div class="rTableCell area_controler" onclick = "post(\'\', objerase);" style = "
+    cursor: pointer;
+" >'._('Upravit zónu').'</div >';
 
 
             }else {
 
                 echo '<div class="rTableCell area_controler" onclick = "document.getElementById(\'zonepopcontainer\').style.display = \'block\';document.getElementById(\'map\').style.display = \'none\';" style = "
     cursor: pointer;
-" > Vyberte zónu.</div >';
+" >'._('Vyberte zónu').'</div >';
             }
             ?>
             </div>
 
             <div class="rTableRow globalcontrols">
             <?php
-            echo '<div class="rTableCell globalcontrol new_area" onclick = "new L.Draw.Polygon(map, drawControl.options.polygon).enable()" style = "
+            echo '<div class="rTableCell globalcontrol new_lamp" onclick = "create_lamp()" style = "
     cursor: pointer;
-" >Nová zóna</div >';
+" >'._('Nová lampa').'</div ><div class="rTableCell globalcontrol new_area" onclick = "new L.Draw.Polygon(map, drawControl.options.polygon).enable()" style = "
+    cursor: pointer;
+" >'._('Nová zóna').'</div >';
 
             ?>
         </div>
+            <div id="newlamp"></div>
         </div>
     </div>
     <div id="snippet--flashes"></div>
@@ -198,23 +204,28 @@ echo '<div class="headcontainer">
         ?>
 
 
-        <div class="form_container">
-            <div id="newlamp">
-            </div>
-            <div id="editace">
-
-                <div id="formular">
-
-                    <div id="lampid"></div>
-                    <div id="buttons"></div>
-                </div>
-            </div>
-
 
         </div>
     </div>
 
     <script>
+        //icona obecna
+        var LeafIcon = L.Icon.extend({
+            options: {
+                shadowUrl: 'img/LightBulb-512.png',
+                iconSize: [15, 15],
+                shadowSize: [0, 0],
+                iconAnchor: [7, 7],
+                shadowAnchor: [0, 0],
+                popupAnchor: [0, -4]
+            }
+        });
+        //ikony konkretni
+        var lampIcon = new LeafIcon({iconUrl: 'img/sviti.png'});
+        var lampIcon_nesviti = new LeafIcon({iconUrl: 'img/nesviti.png'});
+        var lampIcon_oznacena = new LeafIcon({iconUrl: 'img/oznacena.png'});
+        var lampIcon_edit = new LeafIcon({iconUrl: 'img/edit.png'});
+
         <?php
         if(!empty($_POST)){
 
@@ -254,7 +265,10 @@ echo '<div class="headcontainer">
           }
         //if new controler
           If($_POST['control']=="new"){
-           mysqli_query($dataconection, "INSERT INTO control_gateway (ID_company, Name_control) VALUES ('".$_SESSION['company']."', '".$_POST['control_name']."');");
+          echo 'console.log("New controler");';
+          $sql = "INSERT INTO control_gateway (company_ID_company, Name_control) VALUES ('".$_SESSION['company']."', '".$_POST['control_name']."');";
+          echo 'console.log("'.$sql.'");';
+           mysqli_query($dataconection, $sql);
            $result=mysqli_query($dataconection, "SELECT ID_control FROM control_gateway ORDER BY ID_control DESC
         LIMIT 0 , 1 ");
         $row = mysqli_fetch_array($result);
@@ -262,20 +276,20 @@ echo '<div class="headcontainer">
         echo 'console.log("'.$row[0].'");';
           }
 
-        If($_POST['lamp_id']=="new"){
+        if($_POST['lamp_id']=="new"){
 
         echo 'console.log("New lamp");';
-        If($_POST['plan']=='-1'){
-        mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`, `set_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_POST['workload'].");");
+        if($_POST['plan']=='-1'){
+        mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`, `set_workload`,`area_ID_area`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_POST['workload'].",".$_SESSION['zone'].");");
         }else{
-        mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].");");
+        mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`,`area_ID_area`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_SESSION['zone'].");");
         }
         $result=mysqli_query($dataconection, "SELECT id FROM  `lamp` ORDER BY id DESC LIMIT 0 , 1;");
         $row = mysqli_fetch_array($result);
         $_POST['lamp_id']=$row[0];
         }else{
         echo 'console.log("Old lamp");';
-        If($_POST['plan']=='-1'){
+        if($_POST['plan']=='-1'){
         mysqli_query($dataconection, "UPDATE  `lamp` SET  `is_enabled` =  ".$_POST['lamp_status'].",
         `long` =  ".$_POST['lat'].",
         `lat` =  ".$_POST['lng'].",
@@ -342,36 +356,23 @@ echo '<div class="headcontainer">
         //map.addLayer(googleLayer);
 
 
-        //icon
-        var LeafIcon = L.Icon.extend({
-            options: {
-                shadowUrl: 'img/LightBulb-512.png',
-                iconSize: [15, 15],
-                shadowSize: [0, 0],
-                iconAnchor: [7, 7],
-                shadowAnchor: [0, 0],
-                popupAnchor: [0, -4]
-            }
-        });
 
-        //ikony konkretni
-        var lampIcon = new LeafIcon({iconUrl: 'img/sviti.png'});
-        var lampIcon_nesviti = new LeafIcon({iconUrl: 'img/nesviti.png'});
-        var lampIcon_oznacena = new LeafIcon({iconUrl: 'img/oznacena.png'});
-        var lampIcon_edit = new LeafIcon({iconUrl: 'img/edit.png'});
+
+
 
 
         //newlamp
-        create_lamp_button();
         function create_lamp() {
             unselect_all();
             new_lamp = 1;
-            document.getElementById("newlamp").innerHTML = '<span style="font-weight: bold">Pro vytvoření nové lampy klikněte do mapy.</span><br><button class="buttons pulk" type="Cancel_btt" onclick="new_lamp=0;create_lamp_button();">Zrušit</button>';
+            document.getElementById("newlamp").innerHTML = '<span style="font-weight: bold">Pro vytvoření nové lampy klikněte do mapy.</span><br><button class="buttons pulk" type="Cancel_btt" onclick="new_lamp=0;/*create_lamp_button();*/">Zrušit</button>';
         }
 
-        function create_lamp_button() {
-            document.getElementById("newlamp").innerHTML = '<button id="new_lamp_btt" class="buttons" type="newlamp_btt" onclick="create_lamp();" style="width:100%;">Nová lampa</button>';
-        }
+
+        //create_lamp_button();
+//        function create_lamp_button() {
+//            document.getElementById("newlamp").innerHTML = '<button id="new_lamp_btt" class="buttons" type="newlamp_btt" onclick="create_lamp();" style="width:100%;">Nová lampa</button>';
+//        }
 
 
         function form_Create(id) {
@@ -438,16 +439,19 @@ echo '<div class="headcontainer">
                     lamps[select_company][id].setIcon(lampIcon_nesviti);
                 }
             }
-            document.getElementById("lampid").innerHTML = '';
-            document.getElementById("buttons").innerHTML = '';
+            //document.getElementById("lampid").innerHTML = '';
+            //document.getElementById("buttons").innerHTML = '';
         }
 
         function select_lamp(id) {
             unselect_all();
             lamps[select_company][id].setIcon(lampIcon_oznacena);
-            form_Create(id);
+
+            if (document.readyState === "complete"){
+                lamps[select_company][id].openPopup();
+                form_Create(id);
+            }
         }
-        ;
 
 
         var lamps = [];
@@ -478,9 +482,9 @@ WHERE company_ID_company =".$_SESSION['company'];
         echo 'lamps["'.$_SESSION['company'].'"]=[];';
         echo 'control_list["'.$_SESSION['company'].'"]=[];';
         echo 'plan_list["'.$_SESSION['company'].'"]=[];';
-        $sql = "SELECT lamp.lat,lamp.long,lamp.id,Gate.Name_control,lamp.is_enabled,workload_plan.ID_PLAN,workload_plan.PLAN_NAME,lamp.set_workload FROM `company`
-        LEFT OUTER JOIN control_gateway AS Gate ON Gate.ID_company = company.ID_company
-        LEFT OUTER JOIN lamp ON lamp.ID_control = Gate.ID_control
+        $sql = "SELECT lamp.lat,lamp.long,lamp.id,control_gateway.Name_control,lamp.is_enabled,workload_plan.ID_PLAN,workload_plan.PLAN_NAME,lamp.set_workload FROM `company`
+        LEFT OUTER JOIN control_gateway ON control_gateway.company_ID_company = company.ID_company
+        LEFT OUTER JOIN lamp ON lamp.ID_control = control_gateway.ID_control
         LEFT OUTER JOIN workload_plan ON workload_plan.ID_PLAN = lamp.ID_workload
         WHERE company.ID_company= ".$_SESSION['company']." AND lamp.x_deleted = '0'";
         if(isset($_SESSION['zone'])){
@@ -492,7 +496,7 @@ WHERE company_ID_company =".$_SESSION['company'];
            die('</script><div class="error">' . mysqli_error($dataconection).'</div><script>');
         }
 
-        $controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM control_gateway WHERE ID_company = ".$_SESSION['company']." AND x_deleted = '0';");
+        $controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM control_gateway WHERE company_ID_company = ".$_SESSION['company']." AND x_deleted = '0';");
         if (!$controls) {
             die('</script><div class="error">' . mysqli_error($dataconection).'</div><script>');
         }
@@ -504,7 +508,7 @@ WHERE company_ID_company =".$_SESSION['company'];
 
         $plans=mysqli_query($dataconection, "SELECT ID_PLAN,PLAN_NAME FROM workload_plan WHERE ID_company = ".$_SESSION['company']." AND x_deleted = '0';");
         if (!$plans) {
-            die('</script><div class="error">Invalid query: ' . mysqli_error($dataconection).'</div><script>');
+            die('</script><div class="error">Invalid query: '.mysqli_error($dataconection).'</div><script>');
         }
         //plan_list je seznam planu spolecnosti
         while ($plan = mysqli_fetch_array($plans, MYSQLI_NUM)) {
@@ -538,7 +542,8 @@ WHERE company_ID_company =".$_SESSION['company'];
         echo 'lamps["'.$_SESSION['company'].'"]['.$row[2].'].workload = "'.$row[7].'";';
         echo 'lamps["'.$_SESSION['company'].'"]['.$row[2].'].control_list = control_list;
 
-        lamps["'.$_SESSION['company'].'"]['.$row[2].'].on(\'click\',function editace(){
+        lamps["'.$_SESSION['company'].'"]['.$row[2].'].bindPopup("<div class=\'form_container\'><div id=\'editace\'><div id=\'formular\'><div id=\'lampid\'></div><div id=\'buttons\'></div></div></div>")
+            .on(\'click\',function editace(){
             if(edited_lamp==0&&new_lamp==0){
             select_lamp('.$row[2].');
             }
@@ -587,9 +592,9 @@ WHERE company_ID_company =".$_SESSION['company'];
 
 
             if (lamps[select_company][id].enabled == "1") {
-                enabled = '<input id="check" style="check" type="checkbox" name="status" value="1" onclick="change_status(' + id + ');" checked>';
+                enabled = '<input id="check" style="check" type="checkbox" name="status" value="1" onclick="change_status()" checked>';
             } else {
-                enabled = '<input id="check" style="check" type="checkbox" name="status" value="1" onclick="change_status(' + id + ');">';
+                enabled = '<input id="check" style="check" type="checkbox" name="status" value="1" onclick="change_status()">';
             }
 
             plan = '<select id="select_plan" class="lamp_control" onchange="new_plan(this.value);">';
@@ -633,9 +638,8 @@ WHERE company_ID_company =".$_SESSION['company'];
             }
 
         }
-        ;
 
-        function change_status(id) {
+        function change_status() {
             if (document.getElementById("check").checked == true) {
                 document.getElementById("status_container").style.display = "block";
             } else {
@@ -645,7 +649,7 @@ WHERE company_ID_company =".$_SESSION['company'];
 
         function new_controler(choice) {
             if (choice == "new") {
-                document.getElementById("new_input").innerHTML = '<div class="nazev_atributu">Jméno kontroleru:</div><input id="New_controler" type="text"></input>';
+                document.getElementById("new_input").innerHTML = '<div class="nazev_atributu">Jméno kontroleru:</div><input id="New_controler" type="text">';
             } else {
                 document.getElementById("new_input").innerHTML = '';
             }
@@ -674,7 +678,7 @@ WHERE company_ID_company =".$_SESSION['company'];
             delete lamps[select_company]['new'];
             draw_map();
             unselect_all();
-            create_lamp_button();
+            //create_lamp_button();
         }
 
         function cancel_edit(id) {
@@ -684,7 +688,7 @@ WHERE company_ID_company =".$_SESSION['company'];
             draw_map();
             console.log(id);
             select_lamp(id);
-            create_lamp_button();
+            //create_lamp_button();
         }
 
         function save_lamp(id) {
@@ -727,10 +731,10 @@ WHERE company_ID_company =".$_SESSION['company'];
             };
             post("", obj);
 
-
-            draw_map();
-            select_lamp(id);
-            create_lamp_button();
+            //if not post
+            //draw_map();
+            //select_lamp(id);
+            //create_lamp_button();
         }
 
 
@@ -740,38 +744,10 @@ WHERE company_ID_company =".$_SESSION['company'];
             for (id in lamps[select_company]) {
                 lamps[select_company][id].addTo(markers);
             }
-            markers.addTo(map)
-            create_lamp_button();
+            markers.addTo(map);
+            //create_lamp_button();
         }
-        ;
 
-
-        map.on('click', function (e) {
-            console.log("map");
-            if (edited_lamp == 0) {
-                unselect_all();
-                if (new_lamp == 0) {
-                    document.getElementById("new_lamp_btt").className = "buttons";
-                }
-            }
-            if (new_lamp == 1) {
-                console.log(e.latlng);
-                lamps[select_company]['new'] = L.marker(e.latlng, {icon: lampIcon}).addTo(markers).on('click', function editace() {
-                        if (edited_lamp == 0 && new_lamp == 0) {
-                            select_lamp('new');
-                        }
-                    }
-                ).on('dragend', function upradecords() {
-                        if (edited_lamp != 0) {
-                            update_cords('new');
-                        }
-                    }
-                );
-                new_lamp = 0;
-                edit_lamp('new');
-            }
-            ;
-        });
 
         if (select_company == "") {
 
@@ -797,6 +773,13 @@ WHERE company_ID_company =".$_SESSION['company'];
             },
             position: 'topleft'
         });
+        map.on('click', function (e) {
+            console.log("Map unselect all");
+            if (edited_lamp == 0) {
+                unselect_all();
+            }
+        }
+        )
         map.addControl(drawControl);
         map.on('draw:edited', function (e) {
             var layers = e.layers;
@@ -861,13 +844,11 @@ WHERE company_ID_company =".$_SESSION['company'];
                 console.log("newfeatureGroup");
                 if (edited_lamp == 0) {
                     unselect_all();
-                    if (new_lamp == 0) {
-                        document.getElementById("new_lamp_btt").className = "buttons";
-                    }
                 }
                 if (new_lamp == 1) {
                     console.log(e.latlng);
-                    lamps[select_company]['new'] = L.marker(e.latlng, {icon: lampIcon}).addTo(markers).on('click', function editace() {
+                    lamps[select_company]['new'] = L.marker(e.latlng, {icon: lampIcon}).addTo(markers).bindPopup("<div class='form_container'><div id='editace'><div id='formular'><div id='lampid'></div><div id='buttons'></div></div></div>")
+                        .on('click', function editace() {
                             if (edited_lamp == 0 && new_lamp == 0) {
                                 select_lamp('new');
                             }
@@ -879,9 +860,10 @@ WHERE company_ID_company =".$_SESSION['company'];
                         }
                     );
                     new_lamp = 0;
+                    lamps[select_company]['new'].openPopup();
                     edit_lamp('new');
                 }
-                ;
+
             });
             map.fitBounds(newfeatureGroup.getBounds())
         }
