@@ -1,66 +1,88 @@
 <?php
-
+if ($_SESSION['id']){
 $result = mysqli_query($dataconection, "SELECT * 
 FROM  `users` 
-LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.ID_user
-WHERE users.id=".$_SESSION['id'].";");
-
+LEFT OUTER JOIN rule_access AS Rule ON users.id = Rule.users_ID
+WHERE users.id=" . $_SESSION['id'] . ";");
 
 
 $row = mysqli_fetch_array($result);
-//echo $row;
 extract($row);
-if($Super_admin==1)
-{
-$result = mysqli_query($dataconection, "SELECT ID_company, Company_name
-FROM  `Company` ");
-}else{
-$result = mysqli_query($dataconection, "SELECT Company.ID_company AS ID_company,Company.Company_name AS Company_name FROM `users`
-LEFT OUTER JOIN License_managment AS Managment ON users.id = Managment.ID_user
-LEFT OUTER JOIN Company ON Company.ID_company = Managment.ID_company
-WHERE users.id=".$_SESSION['id']."; 
+if ($Super_admin == 1) {
+    $result = mysqli_query($dataconection, "SELECT ID_company, Company_name
+FROM  `company` ");
+} else {
+    $result = mysqli_query($dataconection, "SELECT *,company.ID_company AS ID_company,company.company_display_name AS Company_name FROM `users`
+LEFT OUTER JOIN license_managment ON users.id = license_managment.users_id
+LEFT OUTER JOIN company ON company.ID_company = license_managment.company_ID_company
+WHERE users.id=" . $_SESSION['id'] . ";
 ");
 }
 
 ?>
+<script src="module/myscript.js"></script>
 <script>
-var select_company;
+    var select_company;
+    function switch_company() {
+        <?php
+        echo 'window.location.href="'.$_SERVER['SERVER_ROOT'].'?c="+document.getElementById(\'company\').value;';
+        ?>
+    }
 </script>
 
 <div class="nav">
-Společnost:
-<select id="company" class="nav_select item" name="company" onchange='unselect_all();select_company=document.getElementById("company").value;draw_map();'>
-<?php
-$_SESSION['company']=array();
-if(!empty($result)){
-While( $row = mysqli_fetch_array($result) )
-{
-extract($row);
+    <?php
+    echo _('Společnost:');
 
-      $_SESSION['company'][$ID_company]=$Company_name;            
-      echo '<option value="'.$ID_company.'">'.$Company_name.'</option>';
+    echo '<select id="company" class="nav_select item" name="company" onchange="switch_company();">';
 
-}
-}else{
- $_SESSION['company'][1]="Demo";            
-      echo '<option value="1">Demo</option>';
-}
- 
-?>
-    </select>   
-<?php
+    $_SESSION['company_list'] = array();
 
 
-  
-  echo '
+    $DEMO = True;
+    while ($row = mysqli_fetch_array($result)) {
+        if (isset($row['ID_company'])) {
+            if ($row['ID_company'] != $DEMOCOMPANYID or $Super_admin == 1) {
+                extract($row);
+                $_SESSION['company_list'][$ID_company] = $Company_name;
+                echo '<option value="' . $ID_company . '">' . $Company_name . '</option>';
+            }
+            $DEMO = False;
+        }
+    }
+
+        $_SESSION['company_list'][1] = "Demo";
+        echo '<option value="' . $DEMOCOMPANYID . '">Demo</option>';
+
+
+    ?>
+    </select>
+    <?php
+
+
+    echo '
 
 <div class="first item">
-<a class="link" href="pravidla.php">Přistupová pravidla</a> 
+<a class="link" href="?p=copanyprofile">'._('Přistupová pravidla').'</a>
 </div>
 <div class="last item">
-<a class="link" href="index.php?action=odhlasit_se">Odhlásit se</a>
+<a class="link" href="index.php?action=odhlasit_se">'._('Odhlásit se').'</a>
+</div>'
+        ?>
 </div>
-  </div>
-  <script>document.getElementById("company").value;</script>
-  '
-?>
+
+<?php
+
+    If (!empty($_SESSION['company'])) {
+        echo '<script>document.getElementById("company").value=' . $_SESSION['company'] . ';</script>';
+    } else {
+        if ($_SESSION['page'] != 'company') {
+            echo '<script>window.location.href="' . $_SERVER['SERVER_ROOT'] . '?p=company"</script>';
+        }
+    }
+
+    } else {
+        echo _('Neprihlasen');
+    }
+    ?>
+

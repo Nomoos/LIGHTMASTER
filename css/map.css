@@ -1,5 +1,5 @@
 body{
-        background: #FFE4C2;
+        background: #F8F8F8;
       }
       .buttons:hover{
       background: rgb(255, 228, 194);
@@ -54,7 +54,7 @@ body{
         color: white;
       }
       a.link:hover {
-        background: #FFE4C2;
+        background: #F8F8F8;
         text-decoration: none;
         color: black;
       }
@@ -68,6 +68,8 @@ body{
       .space31{
       height : 31px;
       }
+
+      /*
       .form_container{
       color: white;
       margin-top: 30px;
@@ -78,6 +80,8 @@ body{
       background: #C99F6A;
       width: auto;
       }
+      */
+
       .container{
       height: 581px;
       /*background:#DEB887; */
@@ -89,7 +93,7 @@ body{
       }
       .nazev_atributu {
       font-weight: bold;
-      color: bisque;
+      /*color: bisque;*
       }
       .pulka{
       width:50%;
@@ -129,4 +133,57 @@ select {
 }
 .content_container{
  background:rgb(218, 160, 85) ;
+}
+
+
+.maps {
+
+  background: rgb(218, 160, 85);
+}
+.headcontainer{
+  margin-left: auto;
+  margin-right: auto;
+  width: 550px;
+}
+.flag {
+  width: 30px;
+}
+.flags{
+  float: right;
+}
+.description{
+  margin-left: 50px;
+}
+
+.projectname{
+  font-weight: bold ;
+}
+.popcontainer {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.5);
+
+}
+#zonepopcontainer,#controlpopcontainer {
+  display:None;
+}
+#newzonepopcontainer {
+  display:None;
+}
+
+.popsubcontainer{
+  background: #888888;
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+}
+
+.arealistpageactive{
+  color:black;
 }

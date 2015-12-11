@@ -1,0 +1,86 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lightmaster\n"
+"POT-Creation-Date: 2015-12-06 12:22+0100\n"
+"PO-Revision-Date: 2015-12-09 12:38+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.4\n"
+"X-Poedit-Basepath: ../../..\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Last-Translator: \n"
+"Language: sk_SK\n"
+"X-Poedit-SearchPath-0: .\n"
+
+# company.php:22
+msgid "Map"
+msgstr ""
+
+# index.php:24
+msgid "test"
+msgstr "SK Zkontrolovat"
+
+# index.php:180
+msgid "Projekt: ME1 – C2M"
+msgstr ""
+
+# index.php:166
+msgid "Řídící a monitorovací systém pro pouliční LED osvětlení třídy ME1."
+msgstr ""
+
+# test-locale.php:5
+msgid "Hello World!"
+msgstr ""
+
+# test-locale.php:6
+msgid "Testing Translation..."
+msgstr ""
+
+# nlsdemo.php:11
+msgid "Internationalized form"
+msgstr ""
+
+# nlsdemo.php:15
+msgid "Welcome!"
+msgstr ""
+
+# nlsdemo.php:17
+msgid "Your preferred natural number: "
+msgstr ""
+
+# nlsdemo.php:19
+msgid "Submit"
+msgstr ""
+
+# nlsdemo.php:22
+msgid "Here is your <i>magic matrix</i>."
+msgstr ""
+
+# nlsdemo.php:35
+msgid "Generate new matrix"
+msgstr ""
+
+# nlsdemo.php:39
+msgid "Czech interface"
+msgstr ""
+
+# nlsdemo.php:40
+msgid "Autodetect language"
+msgstr ""
+
+msgid "HELLO_WORLD_2"
+msgstr "Anglicky"
+
+msgid "HELLO_WORLD!!!!"
+msgstr "Anglicky"
+
+# test-locale.php:14
+msgid "HELLO_WORLD"
+msgstr "Ahoj svete"
+
+# index.php:183
+msgid "ProjektME1C2M"
+msgstr "Projekt: ME1 - C2M"
