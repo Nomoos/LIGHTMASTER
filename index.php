@@ -15,6 +15,8 @@ if (isset($_GET['p'])) {
 
 if (isset($_GET['c'])) {
     $_SESSION['company'] = $_GET['c'];
+    $_SESSION['zone'] = '';
+    unset($_SESSION['zone']);
     header("Location: " . $_SERVER['SERVER_ROOT'] . "");
 if (isset($_GET['action'])) {
     if ($_GET['action'] == 1) {
@@ -28,6 +30,11 @@ if (isset($_GET['action'])) {
 //if action non set
 }
     die();
+}
+
+if (isset($_GET['control'])) {
+    $_SESSION['control'] = $_GET['control'];
+    header("Location: " . $_SERVER['SERVER_ROOT'] . "");
 }
 
 if (isset($_GET['z'])) {
@@ -103,9 +110,8 @@ if (!empty($_SESSION['login']) and !empty($_SESSION['heslo'])) {
 
 
 echo '
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
 	<title>';
@@ -243,6 +249,7 @@ if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '
 //když je nastavená stránka
 } else {
     require_once 'pristup.php';
+    include 'module/head.php';
 //old php on web lightmaster php 5.4+ use $pages = ["map" => "map.php"]
     $pages = array(
         "map" => "map.php",
@@ -255,6 +262,7 @@ if (empty($r_ava['avatar']) OR !isset($r_ava['avatar']) OR $r_ava['avatar'] == '
         "zones" => "zones.php",
     );
     $pageset = 0;
+    get_head($_SESSION['page']);
     foreach ($pages as $key => $value) {
 
         if ($_SESSION['page'] == $key) {

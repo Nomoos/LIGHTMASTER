@@ -16,10 +16,8 @@ if(isset($_SESSION['locale'])){
 }
 $domain = $domain."_".$lang;
 // změna jazyka používaného knihovnou gettext 
-//putenv("LANG=$lang"); 
-if (false === setlocale(LC_ALL, $lang)) {
-    echo('Locale "'.$lang.'" is not installed in the system.');
-}
+//putenv("LANG=$lang");
+setlocale(LC_ALL, $lang);
 bindtextdomain($domain, realpath("./locale"));
 bind_textdomain_codeset($domain, "utf-8");
 textdomain($domain);

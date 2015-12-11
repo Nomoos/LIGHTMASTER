@@ -37,91 +37,6 @@ if(!empty($_POST)) {
 ?>
 
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="description" content="">
-
-    <title>Map</title>
-    <!-- js knihovny -->
-    <script src="lib/leaflet/leaflet.js"></script>
-
-    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
-    <script src="lib/js/jquery.js"></script>
-    <!-- styly -->
-    <link rel="stylesheet" href="lib/leaflet/leaflet.css"/>
-    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet'/>
-    <link rel="stylesheet" href="css/css/kraken.css"/>
-    <link rel="stylesheet" href="css/map.css"/>
-    <link rel="stylesheet" href="css/table.css"/>
-    <link rel="shortcut icon" href="img/sviti.png"/>
-
-    <!-- testy -->
-    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.4/Leaflet.fullscreen.min.js'></script>
-    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.4/leaflet.fullscreen.css'
-          rel='stylesheet'/>
-    <!-- google -->
-    <script src="http://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
-    <script src="http://matchingnotes.com/javascripts/leaflet-google.js"></script>
-
-    <style>
-        .maps {
-
-            background: rgb(218, 160, 85);
-        }
-        .headcontainer{
-            margin-left: auto;
-            margin-right: auto;
-            width: 550px;
-        }
-        .flag {
-            width: 30px;
-        }
-        .flags{
-            float: right;
-        }
-        .description{
-            margin-left: 50px;
-        }
-
-        .projectname{
-            font-weight: bold ;
-        }
-        .popcontainer {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            top: 0;
-            left: 0;
-            background: rgba(255, 255, 255, 0.5);
-
-        }
-        #zonepopcontainer {
-            display:None;
-        }
-        #newzonepopcontainer {
-            display:None;
-        }
-
-        .popsubcontainer{
-            background: #888888;
-            width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 50px;
-        }
-
-        .arealistpageactive{
-            color:black;
-        }
-
-    </style>
-
-
-</head>
 
 <body>
 <?php
@@ -139,11 +54,18 @@ echo '<div class="headcontainer">
         require_once 'module/usermenu.php';
         require_once 'module/menu.php';
         require_once 'zones.php';
+        require_once 'controls.php';
         if(isset($_SESSION['zone']) AND !isset($_POST['deletearea'])) {
             $actualzone = mysqli_query($dataconection, "SELECT * FROM area WHERE ID_area =" . $_SESSION['zone']);
             while ($actualzonearr = mysqli_fetch_array($actualzone)) {
                 $zone = $actualzonearr['Area_name'];
                 $actualarea = $actualzonearr['Location'];
+            }
+        }
+        if(isset($_SESSION['control']) AND !isset($_POST['deletearea'])) {
+            $actualcontrolresult = mysqli_query($dataconection, "SELECT * FROM control_gateway WHERE ID_control =" . $_SESSION['control']);
+            while ($actualcontrolarr = mysqli_fetch_array($actualcontrolresult)) {
+                $controlname = $actualcontrolarr['Name_control'];
             }
         }
         ?>
@@ -181,6 +103,41 @@ echo '<div class="headcontainer">
 " >'._('Vyberte zónu').'</div >';
             }
             ?>
+            </div>
+            <div class="rTableRow zone">
+                <?php
+                if(isset($_SESSION['control'])){
+                    echo '<script>objerase = {
+                    "deletecontrol": 1,
+                    "deletecontrolid":'.$_SESSION['control'].'
+                };
+                var actualcontrol='.$_SESSION['control'].';</script><div class="rTableCell zonename">'.$controlname.'</div>';
+                    echo '<div class="rTableCell control_controler" onclick = "document.getElementById(\'controlpopcontainer\').style.display = \'block\';document.getElementById(\'map\').style.display = \'none\';" style = "
+    cursor: pointer;
+" >'._('Přepnout kontrolní bod').'</div >';
+                    echo '<div class="rTableCell control_controler" onclick = "document.getElementById(\'newarea\').value = \''.$actualarea.'\';
+                document.getElementById(\'newcontrolformareaname\').value = \''.$_SESSION['control'].'\';
+                document.getElementById(\'createcontrol\').value = 0;
+                document.getElementById(\'newcontrolformbutton\').value = \'Přejmenovat zónu\';
+                document.getElementById(\'newcontrolpopcontainer\').style.display = \'block\';" style = "
+    cursor: pointer;
+" >'._('Přejmenovat kontrolní bod').'</div >';
+                    echo '<div class="rTableCell control_controler" onclick = "post(\'\', objerase);" style = "
+    cursor: pointer;
+" >'._('Smazat kontrolní bod').'</div >';
+
+                    echo '<div class="rTableCell control_controler" onclick = "post(\'\', objerase);" style = "
+    cursor: pointer;
+" >'._('Upravit kontrolní bod').'</div >';
+
+
+                }else {
+
+                    echo '<div class="rTableCell control_controler" onclick = "document.getElementById(\'controlpopcontainer\').style.display = \'block\';document.getElementById(\'map\').style.display = \'none\';" style = "
+    cursor: pointer;
+" >'._('Vyberte kontrolní bod').'</div >';
+                }
+                ?>
             </div>
 
             <div class="rTableRow globalcontrols">
@@ -234,7 +191,7 @@ echo '<div class="headcontainer">
         echo 'var map = L.map(\'map\').setView(['.$_POST['lat_default'].', '.$_POST['lng_default'].'], '.$_POST['zoom'].');';
 
         }else{
-        echo 'var map = L.map(\'map\').setView([49.5939, 17.2655], 14);';
+        echo 'var map = L.map(\'map\').setView([49.5939, 17.2655], 2);';
         }
 
 
@@ -266,24 +223,33 @@ echo '<div class="headcontainer">
         //if new controler
           If($_POST['control']=="new"){
           echo 'console.log("New controler");';
-          $sql = "INSERT INTO control_gateway (company_ID_company, Name_control) VALUES ('".$_SESSION['company']."', '".$_POST['control_name']."');";
+          $sql = "INSERT INTO control_gateway (area_ID_area, Name_control) VALUES ('".$_SESSION['zone']."', '".$_POST['control_name']."');";
+          if($DEBUG) {
           echo 'console.log("'.$sql.'");';
+          }
            mysqli_query($dataconection, $sql);
            $result=mysqli_query($dataconection, "SELECT ID_control FROM control_gateway ORDER BY ID_control DESC
         LIMIT 0 , 1 ");
         $row = mysqli_fetch_array($result);
         $_POST['control']=$row[0];
+        if($DEBUG) {
         echo 'console.log("'.$row[0].'");';
+        }
           }
 
         if($_POST['lamp_id']=="new"){
-
+        if($DEBUG) {
         echo 'console.log("New lamp");';
-        if($_POST['plan']=='-1'){
-        mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`, `set_workload`,`area_ID_area`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_POST['workload'].",".$_SESSION['zone'].");");
-        }else{
-        mysqli_query($dataconection, "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `ID_control`, `ID_workload`,`area_ID_area`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_SESSION['zone'].");");
         }
+        if($_POST['plan']=='-1'){
+        $sql = "INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `control_gateway_ID_control`, `ID_workload`, `set_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].",".$_POST['workload'].");";
+        }else{
+        $sql ="INSERT INTO `lamp`(`is_enabled`, `long`, `lat`, `control_gateway_ID_control`, `ID_workload`) VALUES (".$_POST['lamp_status'].",".$_POST['lat'].",".$_POST['lng'].",".$_POST['control'].",".$_POST['plan'].");";
+        }
+        if($DEBUG) {
+        echo 'console.log("'.$row[0].'");';
+        }
+         mysqli_query($dataconection, $sql);
         $result=mysqli_query($dataconection, "SELECT id FROM  `lamp` ORDER BY id DESC LIMIT 0 , 1;");
         $row = mysqli_fetch_array($result);
         $_POST['lamp_id']=$row[0];
@@ -365,7 +331,7 @@ echo '<div class="headcontainer">
         function create_lamp() {
             unselect_all();
             new_lamp = 1;
-            document.getElementById("newlamp").innerHTML = '<span style="font-weight: bold">Pro vytvoření nové lampy klikněte do mapy.</span><br><button class="buttons pulk" type="Cancel_btt" onclick="new_lamp=0;/*create_lamp_button();*/">Zrušit</button>';
+            document.getElementById("newlamp").innerHTML = '<span style="font-weight: bold">Pro vytvoření nové lampy klikněte do mapy.</span><br><div onclick="new_lamp=0;/*create_lamp_button();*/">Zrušit</button>';
         }
 
 
@@ -378,7 +344,7 @@ echo '<div class="headcontainer">
         function form_Create(id) {
 //document.getElementById("formular").innerHTML = 0;
             if (lamps[select_company][id].enabled == "1") {
-                var enabled = '<input id="check" type="checkbox" class="checkbox" onclick="set_status(' + id + ');" checked></input>';
+                var enabled = '<input id="check" type="checkbox" class="checkbox" onclick="set_status(' + id + ');" checked>';
 
                 if (lamps[select_company][id].workload_plan == "-1") {
                     var plan = '<div class="nazev_atributu">Aktuální výkon :</div>' + lamps[select_company][id].actual_workload + '<div class="nazev_atributu">Plán :</div>Manual<div class="nazev_atributu">Nastavený výkon:</div>' + lamps[select_company][id].workload;
@@ -392,7 +358,7 @@ echo '<div class="headcontainer">
             }
 
             document.getElementById("lampid").innerHTML = '<div class="description_lamp"><div class="nazev_atributu">ID Lampy:</div> ' + id + '<div class="nazev_atributu">Kontroluje:</div>' + lamps[select_company][id].gate + '<div class="nazev_atributu">Zapnutá:</div>' + enabled + plan + '<div class="nazev_atributu">Délka:</div>' + lamps[select_company][id].getLatLng().lat + '<div class="nazev_atributu">Šířka:</div>' + lamps[select_company][id].getLatLng().lng + '</div></div>';
-            document.getElementById("buttons").innerHTML = '<button class="pulka buttons" type="Edit_btt" onclick="edit_lamp(' + id + ')">Editovat</button><button class="pulka buttons" type="Delete_btt" onclick="delete_lamp(' + id + ');">Smazat</button>';
+            document.getElementById("buttons").innerHTML = '<div onclick="edit_lamp(' + id + ')">Editovat</div><div onclick="delete_lamp(' + id + ');">Smazat</div>';
         }
         ;
 
@@ -466,9 +432,6 @@ echo '<div class="headcontainer">
         if(!empty($_SESSION['company'])){
         $sql = "SELECT ID_area,Area_name, Location FROM area
 WHERE company_ID_company =".$_SESSION['company'];
-         if(isset($_SESSION['zone'])){
-        $sql = $sql." AND ID_area =".$_SESSION['zone'];
-        }
         $aresult = mysqli_query($dataconection, $sql.";");
         if (!$aresult) {
             echo 'console.log("'.$_SESSION['company'].'");';
@@ -482,23 +445,14 @@ WHERE company_ID_company =".$_SESSION['company'];
         echo 'lamps["'.$_SESSION['company'].'"]=[];';
         echo 'control_list["'.$_SESSION['company'].'"]=[];';
         echo 'plan_list["'.$_SESSION['company'].'"]=[];';
-        $sql = "SELECT lamp.lat,lamp.long,lamp.id,control_gateway.Name_control,lamp.is_enabled,workload_plan.ID_PLAN,workload_plan.PLAN_NAME,lamp.set_workload FROM `company`
-        LEFT OUTER JOIN control_gateway ON control_gateway.company_ID_company = company.ID_company
-        LEFT OUTER JOIN lamp ON lamp.ID_control = control_gateway.ID_control
-        LEFT OUTER JOIN workload_plan ON workload_plan.ID_PLAN = lamp.ID_workload
-        WHERE company.ID_company= ".$_SESSION['company']." AND lamp.x_deleted = '0'";
-        if(isset($_SESSION['zone'])){
-        $sql = $sql."AND lamp.area_ID_area =".$_SESSION['zone'];
-        }
-        $result = mysqli_query($dataconection, $sql.";");
-        if (!$result) {
-            echo 'console.log("'.$_SESSION['company'].'");';
-           die('</script><div class="error">' . mysqli_error($dataconection).'</div><script>');
-        }
 
-        $controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM control_gateway WHERE company_ID_company = ".$_SESSION['company']." AND x_deleted = '0';");
+
+
+        if(isset($_SESSION['zone'])){
+        $controls=mysqli_query($dataconection, "SELECT ID_control,Name_control FROM control_gateway WHERE control_gateway.area_ID_area =".$_SESSION['zone']." AND x_deleted = '0';");
         if (!$controls) {
             die('</script><div class="error">' . mysqli_error($dataconection).'</div><script>');
+        }
         }
         //control_list je seznam spolecnosti a obsahuje na indexu id_spolecnosti vsechny jejich kontrolery
         while ($company = mysqli_fetch_array($controls, MYSQLI_NUM)) {
@@ -516,6 +470,28 @@ WHERE company_ID_company =".$_SESSION['company'];
         };
         echo 'plan_list["'.$_SESSION['company'].'"][-1]= "Manual";';
 
+
+
+        if(isset($_SESSION['control'])){
+        $sql = "SELECT lamp.lat,lamp.long,lamp.id,control_gateway.Name_control,lamp.is_enabled,workload_plan.ID_PLAN,workload_plan.PLAN_NAME,lamp.set_workload FROM `company`
+        LEFT OUTER JOIN area ON area.company_ID_company = company.ID_company
+        LEFT OUTER JOIN control_gateway ON control_gateway.area_ID_area = area.ID_area
+        LEFT OUTER JOIN lamp ON lamp.control_gateway_ID_control = control_gateway.ID_control
+        LEFT OUTER JOIN workload_plan ON workload_plan.ID_PLAN = lamp.ID_workload
+        WHERE company.ID_company= ".$_SESSION['company']." AND lamp.control_gateway_ID_control =".$_SESSION['control']." AND lamp.x_deleted = '0'";
+        }else{
+        $sql = "SELECT lamp.lat,lamp.long,lamp.id,control_gateway.Name_control,lamp.is_enabled,workload_plan.ID_PLAN,workload_plan.PLAN_NAME,lamp.set_workload FROM `company`
+        LEFT OUTER JOIN area ON area.company_ID_company = company.ID_company
+        LEFT OUTER JOIN control_gateway ON control_gateway.area_ID_area = area.ID_area
+        LEFT OUTER JOIN lamp ON lamp.control_gateway_ID_control = control_gateway.ID_control
+        LEFT OUTER JOIN workload_plan ON workload_plan.ID_PLAN = lamp.ID_workload
+        WHERE control_gateway.area_ID_area =".$_SESSION['zone']." AND lamp.x_deleted = '0'";
+        }
+        $result = mysqli_query($dataconection, $sql.";");
+        if (!$result) {
+            echo 'console.log("'.$_SESSION['company'].'");';
+           die('</script><div class="error">' . mysqli_error($dataconection).'</div><script>');
+        }
         while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
         if(!empty($row[0])){
         if($row[4]==1){
@@ -584,11 +560,11 @@ WHERE company_ID_company =".$_SESSION['company'];
             lamps[select_company][id].setIcon(lampIcon_edit);
             edited_lamp = lamps[select_company][id].getLatLng();
 
-            select = '<select id="select_control" class="lamp_control" onchange="new_controler(this.value);">';
-            for (temp in control_list[select_company]) {
-                select = select + '<option id=' + control_list[select_company][temp] + ' value="' + temp + '">' + control_list[select_company][temp] + '</option>';
-            }
-            select = select + '<option value="new">Nový kontroler</option></select><div id="new_input"></div>';
+            //select = '<select id="select_control" class="lamp_control" onchange="new_controler(this.value);">';
+            //for (temp in control_list[select_company]) {
+            //    select = select + '<option id=' + control_list[select_company][temp] + ' value="' + temp + '">' + control_list[select_company][temp] + '</option>';
+            //}
+            //select = select + '<option value="new">Nový kontroler</option></select><div id="new_input"></div>';
 
 
             if (lamps[select_company][id].enabled == "1") {
@@ -618,23 +594,23 @@ WHERE company_ID_company =".$_SESSION['company'];
             }
 
 
-            document.getElementById("lampid").innerHTML = '<div class="description_lamp"><div >ID Lampy:</div> ' + id + '<div class="nazev_atributu">Kontroluje:</div>' + select + '<div class="nazev_atributu">Zapnutá:</div>' + enabled + workload + '<div id="cords"></div></div>';
+            document.getElementById("lampid").innerHTML = '<div class="description_lamp"><div >ID Lampy:</div> ' + id +'<div class="nazev_atributu">V zoně:</div>' + <?php echo '"'.$zone.'"'?> + '<div class="nazev_atributu">Kontroluje:</div>' + <?php echo '"'.$controlname.'"'?> + '<div class="nazev_atributu">Zapnutá:</div>' + enabled + workload + '<div id="cords"></div></div>';
             // pokud společnost nemá kontroler tak vytvarime spolu z lampou nový
             if (control_list[select_company].length == 0) {
                 new_controler("new");
             }
             //staré lampy
             if (id != 'new') {
-                document.getElementById(lamps[select_company][id].gate).selected = true;
+                //document.getElementById(lamps[select_company][id].gate).selected = true;
             }
             document.getElementById(lamps[select_company][id].workload_plan).selected = true;
             update_cords(id);
 
 
             if (id == 'new') {
-                document.getElementById("buttons").innerHTML = '<button class="buttons pulka" type="Save_btt" onclick="save_lamp(\'new\')">Vytvořit</button><button class="buttons pulka" type="Cancel_btt" onclick="cancel_new()">Zrušit</button>';
+                document.getElementById("buttons").innerHTML = '<div onclick="save_lamp(\'new\')">Vytvořit</div><div onclick="cancel_new()">Zrušit</div>';
             } else {
-                document.getElementById("buttons").innerHTML = '<button class="buttons pulka" type="Save_btt" onclick="save_lamp(' + id + ')">Uložit</button><button class="buttons pulka" type="Cancel_btt" onclick="cancel_edit(' + id + ')">Zrušit</button>';
+                document.getElementById("buttons").innerHTML = '<div onclick="save_lamp(' + id + ')">Uložit</div><div onclick="cancel_edit(' + id + ')">Zrušit</div>';
             }
 
         }
@@ -779,7 +755,12 @@ WHERE company_ID_company =".$_SESSION['company'];
                 unselect_all();
             }
         }
-        )
+        );
+        map.on('popupopen', function(e) {
+            var px = map.project(e.popup._latlng); // find the pixel location on the map where the popup anchor is
+            px.y -= e.popup._container.clientHeight/2 // find the height of the popup container, divide by 2, subtract from the Y axis of marker location
+            map.panTo(map.unproject(px),{animate: true}); // pan to new center
+        });
         map.addControl(drawControl);
         map.on('draw:edited', function (e) {
             var layers = e.layers;
@@ -881,7 +862,7 @@ WHERE company_ID_company =".$_SESSION['company'];
         <input type="text" name="areaname" id="newareaformareaname" value="">
         <input type="hidden" name="arealocation" id="newarea" value="" >
         <input type="hidden" name="createarea" id="createarea" value=1 >
-        <input type="submit" id="newareaformbutton" value="Vytvořit zónu"></button>
+        <input type="submit" id="newareaformbutton" value="Vytvořit zónu">
     </form>
     </div>
 </div>

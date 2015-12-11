@@ -1,11 +1,5 @@
 <?php
 
-
-if (isset($_SESSION['zone'])) {
-    $zoneid = $_SESSION['zone'];
-} else {
-    $zoneid = $DEFAULTAREAID;
-}
 echo '<div class="popcontainer" id="zonepopcontainer">';
 echo '<div class="popsubcontainer">';
 

@@ -12,7 +12,7 @@ if ($Super_admin == 1) {
     $result = mysqli_query($dataconection, "SELECT ID_company, Company_name
 FROM  `company` ");
 } else {
-    $result = mysqli_query($dataconection, "SELECT *,company.ID_company AS ID_company,company.Company_name AS Company_name FROM `users`
+    $result = mysqli_query($dataconection, "SELECT *,company.ID_company AS ID_company,company.company_display_name AS Company_name FROM `users`
 LEFT OUTER JOIN license_managment ON users.id = license_managment.users_id
 LEFT OUTER JOIN company ON company.ID_company = license_managment.company_ID_company
 WHERE users.id=" . $_SESSION['id'] . ";
